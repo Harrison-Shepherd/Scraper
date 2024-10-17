@@ -1,9 +1,11 @@
 import requests
 import os
 import pandas as pd
+import logging
 from Utils.sport_category import determine_sport_category
 from Utils.sanitize_filename import sanitize_filename
-from Core.LeaguesList import League 
+from Core.LeaguesList import League
+
 
 class Fixture:
     def __init__(self, league_id, fixture_id, regulation_periods):
@@ -11,22 +13,24 @@ class Fixture:
         self.fixture_id = fixture_id
         self.regulation_periods = regulation_periods
         self.data = pd.DataFrame()
-    
+
     def fetch_data(self):
-        print(f"Fetching fixture data for league {self.league_id}.")
+        logging.info(f"Fetching fixture data for league {self.league_id}.")
         
         # Ensure that league_info is populated
         if not League.league_info:
-            # Fetch leagues to populate league_info
+            logging.info("League info not found, fetching leagues...")
             League.fetch_leagues()
         
         league_name_and_season = League.get_league_name_and_season(self.league_id)
+        sanitized_league_name = sanitize_filename(league_name_and_season)
         
         url = f'http://mc.championdata.com/data/{self.league_id}/fixture.json?/'
+        logging.info(f"Requesting fixture data from URL: {url}")
 
         response = requests.get(url)
         if response.status_code != 200:
-            print(f"Failed to retrieve fixture data for league {self.league_id}: {response.status_code}")
+            logging.error(f"Failed to retrieve fixture data for league {self.league_id}: {response.status_code}")
             return
         
         data = response.json()
@@ -48,8 +52,6 @@ class Fixture:
                     self.league_id
                 )
                 
-                sanitized_league_name = sanitize_filename(league_name_and_season)
-                
                 # Map the sport category to a sport ID (if available)
                 sport_id_map = {
                     'AFL Mens': 1, 'AFL Womens': 2, 'NRL Mens': 3, 'NRL Womens': 4,
@@ -61,10 +63,16 @@ class Fixture:
                 matches_df['sportId'] = sport_id
                 matches_df['fixtureId'] = self.fixture_id
 
+                # Log missing sport category
+                if sport_id is None:
+                    logging.error(f"Sport category '{sport_category}' not found in sport_id_map for league {self.league_id}.")
+                
                 # Generate uniqueFixtureId (composite of fixtureId and matchId)
                 matches_df['uniqueFixtureId'] = matches_df.apply(
                     lambda row: f"{self.fixture_id}-{row['matchId']}" if pd.notnull(row['matchId']) else 'Unknown', axis=1
                 )
+                if matches_df['uniqueFixtureId'].str.contains('Unknown').any():
+                    logging.error(f"Some matches in league {self.league_id} are missing matchId, setting 'uniqueFixtureId' to 'Unknown'.")
 
                 # Generate unique squad IDs for home and away squads
                 matches_df['uniqueHomeSquadId'] = matches_df.apply(
@@ -74,8 +82,15 @@ class Fixture:
                     lambda row: f"{row['awaySquadId']}-{row['awaySquadName']}" if pd.notnull(row['awaySquadId']) and pd.notnull(row['awaySquadName']) else 'Unknown', axis=1
                 )
 
+                # Log missing squad IDs
+                if matches_df['uniqueHomeSquadId'].str.contains('Unknown').any():
+                    logging.error(f"Some matches in league {self.league_id} are missing homeSquadId or homeSquadName.")
+                if matches_df['uniqueAwaySquadId'].str.contains('Unknown').any():
+                    logging.error(f"Some matches in league {self.league_id} are missing awaySquadId or awaySquadName.")
+
+                # Assign the processed data to self.data
                 self.data = matches_df
             else:
-                print(f"No match data found for league {self.league_id}.")
+                logging.error(f"No match data found for league {self.league_id}.")
         else:
-            print(f"Fixture data for league {self.league_id} is not in the expected format.")
+            logging.error(f"Fixture data for league {self.league_id} is not in the expected format.")

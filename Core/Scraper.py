@@ -6,73 +6,57 @@ import re
 import traceback
 from DatabaseUtils.SqlConnector import connect
 from DatabaseUtils.database_helper import DatabaseHelper
-from Utils.logger import setup_logging
+from Utils.logger import setup_logging  # Updated logger import
+from Utils.JsonLoader import load_json_fields  # Import new function
 from Core.LeaguesList import League
 from Core.FixtureDetails import Fixture
 from Core.MatchDetails import Match
-from Core.PeriodData import PeriodData
-from Core.ScoreFlow import ScoreFlow
+from Core.MatchDetails import PeriodData
+from Core.MatchDetails import ScoreFlow
 from Utils.sport_category import determine_sport_category
 
 class Scraper:
     def __init__(self):
-        setup_logging('full_scrape.log')
-        logging.getLogger().setLevel(logging.ERROR)
+        # Setup logging with both error and info logs
+        self.info_logger, self.error_logger = setup_logging()
+
         self.connection = connect()
         if self.connection is None:
-            logging.error("Failed to connect to the database.")
+            self.error_logger.error("Failed to connect to the database.")
             raise ConnectionError("Database connection failed.")
         self.connection.autocommit = False  # Turn off auto-commit
         self.db_helper = DatabaseHelper(self.connection)
-        self.load_json_fields()
 
-    def load_json_fields(self):
-        base_dir = os.path.abspath(os.path.dirname(__file__))
-        json_dir = os.path.join(base_dir, '..', 'Assets', 'jsons', 'unique fields')
-        try:
-            with open(os.path.join(json_dir, 'fixtureFields.json'), 'r') as file:
-                data = json.load(file)
-                self.fixture_fields = data.get('fixture_fields', {})
-            
-            with open(os.path.join(json_dir, 'matchFields.json'), 'r') as file:
-                data = json.load(file)
-                self.match_fields = data.get('match_fields', {})
-            
-            with open(os.path.join(json_dir, 'periodFields.json'), 'r') as file:
-                data = json.load(file)
-                self.period_fields = data.get('period_fields', {})
-            
-            with open(os.path.join(json_dir, 'scoreFlowFields.json'), 'r') as file:
-                data = json.load(file)
-                self.score_flow_fields = data.get('score_flow_fields', {})
-
-            # Load player fields
-            with open(os.path.join(json_dir, 'playerFields.json'), 'r') as file:
-                data = json.load(file)
-                self.player_fields = data.get('player_fields', {})
-    
-            # Load squad fields
-            with open(os.path.join(json_dir, 'squadFields.json'), 'r') as file:
-                data = json.load(file)
-                self.squad_fields = data.get('squad_fields', {})
-    
-            # Load sport fields
-            with open(os.path.join(json_dir, 'sportFields.json'), 'r') as file:
-                data = json.load(file)
-                self.sport_fields = data.get('sport_fields', {})
-    
-            logging.info("JSON field mappings loaded successfully.")
-        except Exception as e:
-            logging.error(f"Error loading JSON fields: {e}")
-            raise
+        # Load JSON fields by calling the new function from json_loader.py
+        self.json_fields = load_json_fields()
+        self.fixture_fields = self.json_fields['fixture_fields']
+        self.match_fields = self.json_fields['match_fields']
+        self.period_fields = self.json_fields['period_fields']
+        self.score_flow_fields = self.json_fields['score_flow_fields']
+        self.player_fields = self.json_fields['player_fields']
+        self.squad_fields = self.json_fields['squad_fields']
+        self.sport_fields = self.json_fields['sport_fields']
 
     def scrape_entire_database(self):
+        # Define the sport_id_map
+        sport_id_map = {
+            'AFL Mens': 1, 
+            'AFL Womens': 2, 
+            'NRL Mens': 3, 
+            'NRL Womens': 4,
+            'FAST5 Mens': 5, 
+            'FAST5 Womens': 6, 
+            'International & NZ Netball Mens': 7,
+            'Netball Womens NZ': 8,
+            'Netball Womens Australia': 9,
+            'Netball Womens International': 10
+        }
+
         # Fetch leagues
         leagues_df, _ = League.fetch_leagues()
         print(f"Fetched {len(leagues_df)} leagues.")
 
-
-        fallback_player_counter =  {}
+        fallback_player_counter = {}
 
         for _, league in leagues_df.iterrows():
             league_id = league['id']
@@ -99,6 +83,19 @@ class Scraper:
                 league_name,
                 league_id
             )
+
+            # Normalize the sport category for logging and comparison
+            sport_category = sport_category.strip().title()  # Normalize case and remove extra spaces
+
+            # Log the normalized category
+            self.info_logger.info(f"Normalized sport category: '{sport_category}' for league: {league_id}")
+
+            # Check if the normalized sport category exists in the sport_id_map
+            if sport_category in sport_id_map:
+                sport_id = sport_id_map[sport_category]
+            else:
+                self.error_logger.error(f"Sport category '{sport_category}' not found in sport_id_map for league {league_id}.")
+                sport_id = None  # If the category is not in the map, log and skip to avoid failures
 
             # Start the transaction
             try:
@@ -187,9 +184,10 @@ class Scraper:
                     match.fetch_data()
 
                     if match.data.empty:
-                        logging.warning(f"Match data is empty for matchId: {match_id}, leagueId: {league_id}.")
+                        self.info_logger.warning(f"Match data is empty for matchId: {match_id}, leagueId: {league_id}.")
                     else:
                         print(f"Fetched {len(match.data)} match records for match {match_id}.")
+
 
                     # Process and collect match data, ensuring correct pairing of squadId and squadName
                     for _, row in match.data.iterrows():
@@ -197,22 +195,19 @@ class Scraper:
                         squad_id = str(row.get('squadId', 'Unknown'))
                         squad_name = str(row.get('squadName', 'Unknown Squad'))  # Use squadName directly from the row
 
-
-
-                        # Check if player_id is None or empty generate a fallback player_id
+                        # Check if player_id is None or empty and generate a fallback player_id
                         if player_id == '0' or not player_id.isdigit():
-                            #initialize the fallback counter for this match if not already initialized
-
+                            # Initialize the fallback counter for this match if not already initialized
                             if match_id not in fallback_player_counter:
                                 fallback_player_counter[match_id] = 1
                             else:
                                 fallback_player_counter[match_id] += 1
 
-                            #generate a fallback playerId like 'unknownPlayer1'
+                            # Generate a fallback playerId like 'unknownPlayer1'
                             player_id = f"unknownPlayer{fallback_player_counter[match_id]}"
 
                         row['matchId'] = str(match_id)
-                        row['playerId'] = player_id # update row with fallback playerId
+                        row['playerId'] = player_id  # update row with fallback playerId
                         row['squadId'] = squad_id
                         row['squadName'] = squad_name
 
@@ -253,10 +248,8 @@ class Scraper:
                     period_data.fetch_data()
                     print(f"Fetched {len(period_data.data)} period records for match {match_id}.")
 
-
                     if not period_data.data.empty:
                         period_data.data['matchId'] = str(match_id)
-
 
                         for idx, row in period_data.data.iterrows():
                             period_num = str(row.get('period', 'Unknown'))
@@ -267,18 +260,15 @@ class Scraper:
                             squad_id = str(row.get('squadId', 'Unknown'))  # Use squadId from the row itself
                             squad_name = str(row.get('squadName', 'Unknown Squad'))  # Use squadName from the row
 
-
-
-                            #apply the same fallback logic for playerId
+                            # Apply the same fallback logic for playerId
                             if player_id == '0' or not player_id.isdigit():
-                                #initialize the fallback counter for this match if not already initialized
-
+                                # Initialize the fallback counter for this match if not already initialized
                                 if match_id not in fallback_player_counter:
                                     fallback_player_counter[match_id] = 1
                                 else:
                                     fallback_player_counter[match_id] += 1
 
-                                #generate a fallback playerId like 'unknownPlayer1'
+                                # Generate a fallback playerId like 'unknownPlayer1'
                                 player_id = f"unknownPlayer{fallback_player_counter[match_id]}"
 
                             row['playerId'] = player_id
@@ -372,6 +362,3 @@ class Scraper:
                 self.connection.rollback()  # Rollback the transaction on error
                 logging.error(f"Transaction rolled back for fixtureId: {fixture_id}")
                 raise  # Re-raise the error after rollback
-
-
-
