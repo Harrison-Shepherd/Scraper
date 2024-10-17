@@ -1,0 +1,63 @@
+CREATE TABLE afl_mens_match (
+  -- Match Information
+  sportId VARCHAR(50) NOT NULL,
+  clearances INT DEFAULT NULL,
+  tackles INT DEFAULT NULL,
+  goals INT DEFAULT NULL,
+  squadId VARCHAR(50) NOT NULL,
+  displayName VARCHAR(50) DEFAULT NULL,
+  playerId VARCHAR(50) NOT NULL,
+  marksContested INT DEFAULT NULL,
+  behinds INT DEFAULT NULL,
+  goalAssists INT DEFAULT NULL,
+  round INT DEFAULT NULL,
+  fixtureId VARCHAR(50) NOT NULL,
+  firstname VARCHAR(45) DEFAULT NULL,  -- Adjusted to match CSV
+  opponent VARCHAR(100) DEFAULT NULL,
+  positionName VARCHAR(50) DEFAULT NULL,
+  squadName VARCHAR(100) DEFAULT NULL,
+  surname VARCHAR(50) DEFAULT NULL,
+  marks INT DEFAULT NULL,
+  inside50s INT DEFAULT NULL,
+  kicksIneffective INT DEFAULT NULL,
+  marksUncontested INT DEFAULT NULL,
+  hitouts INT DEFAULT NULL,
+  possessionsUncontested INT DEFAULT NULL,
+  marksInside50 INT DEFAULT NULL,
+  penalty50sAgainst INT DEFAULT NULL,
+  handballs INT DEFAULT NULL,
+  disposalEfficiency INT DEFAULT NULL,
+  awayId VARCHAR(50) DEFAULT NULL,
+  positionId VARCHAR(50) DEFAULT NULL,
+  jumperNumber INT DEFAULT NULL,
+  freesFor INT DEFAULT NULL,
+  hitoutsToAdvantage INT DEFAULT NULL,
+  kicks INT DEFAULT NULL,
+  possessionsContested INT DEFAULT NULL,
+  kickEfficiency INT DEFAULT NULL,
+  positionCode VARCHAR(50) DEFAULT NULL,
+  clangers INT DEFAULT NULL,
+  shortDisplayName VARCHAR(50) DEFAULT NULL,
+  freesAgainst INT DEFAULT NULL,
+  disposals INT DEFAULT NULL,
+  blocks INT DEFAULT NULL,
+  matchId VARCHAR(50) NOT NULL,
+  homeId VARCHAR(50) NOT NULL,
+  kicksEffective INT DEFAULT NULL,
+
+  -- Precomputed Columns
+  uniqueFixtureId VARCHAR(255) NOT NULL,
+  uniquePlayerId VARCHAR(255) NOT NULL,
+  uniqueSquadId VARCHAR(255) NOT NULL,
+  uniqueSportId VARCHAR(255) NOT NULL,
+  uniqueMatchId VARCHAR(255) NOT NULL,
+
+  -- Primary Key
+  PRIMARY KEY (uniqueMatchId),
+
+  -- Foreign Keys
+  FOREIGN KEY (uniqueFixtureId) REFERENCES afl_mens_fixture(uniqueFixtureId),
+  FOREIGN KEY (uniquePlayerId) REFERENCES player_info(uniquePlayerId),
+  FOREIGN KEY (uniqueSquadId) REFERENCES squad_info(uniqueSquadId),
+  FOREIGN KEY (uniqueSportId) REFERENCES sport_info(uniqueSportId)
+);

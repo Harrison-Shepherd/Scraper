@@ -1,0 +1,42 @@
+{
+  "fixture_fields": {
+    "required_fields": [
+      "fixtureId",
+      "matchId",
+      "sportId",
+      "homeSquadId",
+      "awaySquadId",
+      "venueId",
+      "matchName",
+      "uniqueAwaySquadId",
+      "uniqueHomeSquadId",
+      "uniqueSportId",
+      "uniqueFixtureId"
+    ],
+    "optional_fields": [
+      "periodSecs",
+      "awaySquadName",
+      "matchType",
+      "homeSquadShortCode",
+      "homeSquadNickname",
+      "matchStatus",
+      "roundNumber",
+      "homeSquadName",
+      "awaySquadNickname",
+      "venueCode",
+      "localStartTime",
+      "homeSquadScore",
+      "period",
+      "finalCode",
+      "periodCompleted",
+      "finalShortCode",
+      "awaySquadScore",
+      "venueName",
+      "utcStartTime",
+      "awaySquadCode",
+      "homeSquadCode",
+      "awaySquadShortCode",
+      "matchNumber"
+    ]
+  }
+}

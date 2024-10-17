@@ -1,0 +1,71 @@
+{
+  "AFL Mens": {
+    "fixtures": "Assets/sql insert queries/AFL Mens/afl_mens_fixture_insert.sql",
+    "match_details": "Assets/sql insert queries/AFL Mens/afl_mens_match_insert.sql",
+    "period_stats": "Assets/sql insert queries/AFL Mens/afl_mens_period_insert.sql",
+    "score_flow": "Assets/sql insert queries/AFL Mens/afl_mens_score_flow_insert.sql"
+  },
+  "AFL Womens": {
+    "fixtures": "Assets/sql insert queries/AFL womens/afl_womens_fixture_insert.sql",
+    "match_details": "Assets/sql insert queries/AFL womens/afl_womens_match_insert.sql",
+    "period_stats": "Assets/sql insert queries/AFL womens/afl_womens_period_insert.sql",
+    "score_flow": "Assets/sql insert queries/AFL womens/afl_womens_score_flow_insert.sql"
+  },
+  "Fast5 Mens": {
+    "fixtures": "Assets/sql insert queries/fast5 mens/fast5_mens_fixture_insert.sql",
+    "match_details": "Assets/sql insert queries/fast5 mens/fast5_mens_match_insert.sql",
+    "period_stats": "Assets/sql insert queries/fast5 mens/fast5_mens_period_insert.sql",
+    "score_flow": "Assets/sql insert queries/fast5 mens/fast5_mens_score_flow_insert.sql"
+  },
+  "Fast5 Womens": {
+    "fixtures": "Assets/sql insert queries/fast5 womens/fast5_womens_fixture_insert.sql",
+    "match_details": "Assets/sql insert queries/fast5 womens/fast5_womens_match_insert.sql",
+    "period_stats": "Assets/sql insert queries/fast5 womens/fast5_womens_period_insert.sql",
+    "score_flow": "Assets/sql insert queries/fast5 womens/fast5_womens_score_flow_insert.sql"
+  },
+  "Netball Australian Womens": {
+    "fixtures": "Assets/sql insert queries/Netball Australian Womens/netball_womens_aus_fixture_insert.sql",
+    "match_details": "Assets/sql insert queries/Netball Australian Womens/netball_womens_aus_match_insert.sql",
+    "period_stats": "Assets/sql insert queries/Netball Australian Womens/netball_womens_aus_period_insert.sql",
+    "score_flow": "Assets/sql insert queries/Netball Australian Womens/netball_womens_aus_score_flow_insert.sql"
+  },
+  "Netball International Womens": {
+    "fixtures": "Assets/sql insert queries/Netball International Womens/netball_womens_int_fixture_insert.sql",
+    "match_details": "Assets/sql insert queries/Netball International Womens/netball_womens_int_match_insert.sql",
+    "period_stats": "Assets/sql insert queries/Netball International Womens/netball_womens_int_period_insert.sql",
+    "score_flow": "Assets/sql insert queries/Netball International Womens/netball_womens_int_score_flow_insert.sql"
+  },
+  "Netball Mens": {
+    "fixtures": "Assets/sql insert queries/Netball Mens/netball_mens_fixture_insert.sql",
+    "match_details": "Assets/sql insert queries/Netball Mens/netball_mens_match_insert.sql",
+    "period_stats": "Assets/sql insert queries/Netball Mens/netball_mens_period_insert.sql",
+    "score_flow": "Assets/sql insert queries/Netball Mens/netball_mens_score_flow_insert.sql"
+  },
+  "Netball NZ Womens": {
+    "fixtures": "Assets/sql insert queries/Netball NZ Womens/netball_womens_nz_fixture_insert.sql",
+    "match_details": "Assets/sql insert queries/Netball NZ Womens/netball_womens_nz_match_insert.sql",
+    "period_stats": "Assets/sql insert queries/Netball NZ Womens/netball_womens_nz_period_insert.sql",
+    "score_flow": "Assets/sql insert queries/Netball NZ Womens/netball_womens_nz_score_flow_insert.sql"
+  },
+  "NRL Mens": {
+    "fixtures": "Assets/sql insert queries/NRL Mens/nrl_mens_fixture_insert.sql",
+    "match_details": "Assets/sql insert queries/NRL Mens/nrl_mens_match_insert.sql",
+    "period_stats": "Assets/sql insert queries/NRL Mens/nrl_mens_period_insert.sql",
+    "score_flow": "Assets/sql insert queries/NRL Mens/nrl_mens_score_flow_insert.sql"
+  },
+  "NRL Womens": {
+    "fixtures": "Assets/sql insert queries/NRL Womens/nrl_womens_fixture_insert.sql",
+    "match_details": "Assets/sql insert queries/NRL Womens/nrl_womens_match_insert.sql",
+    "period_stats": "Assets/sql insert queries/NRL Womens/nrl_womens_period_insert.sql",
+    "score_flow": "Assets/sql insert queries/NRL Womens/nrl_womens_score_flow_insert.sql"
+  },
+  "Players": {
+    "info": "Assets/sql insert queries/Players/Players_info_insert.sql"    
+  },
+  "Sports": {
+    "info": "Assets/sql insert queries/Sports/Sport_info_insert.sql"    
+  },
+  "Squads": {
+    "info": "Assets/sql insert queries/Squads/Squad_info_insert.sql"    
+  }
+}
