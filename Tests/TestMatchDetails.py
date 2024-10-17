@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch, MagicMock
 from Core.MatchDetails import Match
 
-class TestMatchDetails(unittest.TestCase):
+class TestMatchDetails(unittest.TestCase): #TODO FIX
     @patch('Core.MatchDetails.requests.get')
     def test_fetch_data_netball_womens_nz(self, mock_get):
         # Updated mock response to include playerInfo

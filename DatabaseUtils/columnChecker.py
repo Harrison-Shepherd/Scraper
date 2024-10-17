@@ -7,23 +7,25 @@ import warnings
 warnings.filterwarnings("ignore", message=".*pandas only support SQLAlchemy.*")
 
 
-
+# Function to check if there are any columns that are completely NULL in every table in the database
 def check_null_columns_in_all_tables():
     """
     Check if there are any columns that are completely NULL in every table in the database.
     """
-
+    # Connect to the database
     connection = connect()  # Connect to the database
     if connection is None:
         print("Failed to connect to the database.")
         return
 
+    # Create a cursor object using the connection
     cursor = connection.cursor()
 
     # Fetch all table names in the database
     cursor.execute("SHOW TABLES")
     tables = cursor.fetchall()
 
+    # For each table, check if there are any columns that are completely NULL
     for table in tables:
         table_name = table[0]
         print(f"\nChecking table: {table_name}")
@@ -56,6 +58,7 @@ def check_null_columns_in_all_tables():
         else:
             print(f"No completely NULL columns found in {table_name}.")
 
+    # Close the cursor and connection
     cursor.close()
     connection.close()
 

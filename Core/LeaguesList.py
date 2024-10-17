@@ -8,6 +8,7 @@ from Utils.sanitize_filename import sanitize_filename
 class League:
     league_info = {}
     
+    # Fetch leagues from the Champion Data API
     @classmethod
     def fetch_leagues(cls):
         url = 'http://mc.championdata.com/data/competitions.json'
@@ -18,6 +19,7 @@ class League:
             logging.error(f"Failed to retrieve data: {response.status_code}")
             return pd.DataFrame(), pd.DataFrame()
         
+        # Parse the JSON response
         try:
             leagues = response.json()
         except ValueError:
@@ -45,6 +47,7 @@ class League:
         # Return the full DataFrame and a simplified one with only relevant columns
         return leagues_df, leagues_df[['id', 'league_season', 'season']].drop_duplicates()
     
+    # Get the league name and season based on league_id
     @classmethod
     def get_league_name_and_season(cls, league_id):
         # Safely get the league name and season based on league_id, defaulting to 'Unknown League' if not found

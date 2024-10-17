@@ -1,6 +1,8 @@
 import mysql.connector
 from mysql.connector import Error
 
+
+# Function to establish a connection to the MySQL database
 def connect():
     """Establish and return a connection to the MySQL database using mysql-connector."""
     try:
@@ -18,6 +20,8 @@ def connect():
         print(f"Error connecting to the MySQL database: {e}")
         return None
 
+
+# Function to select a database
 def execute_query_from_file(connection, sql_file_path, parameters=None):
     """Executes a query from a given SQL file with optional parameters."""
     try:

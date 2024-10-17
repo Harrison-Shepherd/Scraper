@@ -12,6 +12,7 @@ json_file_path = os.path.join(assets_folder, 'leagues_filter.json')
 with open(json_file_path, 'r') as file:
     league_filters = json.load(file)
 
+# Function to determine the sport category based on squad ID patterns, league name, and league ID
 def determine_sport_category(regulation_periods, squad_ids, league_name, league_id):
     """
     Determine the sport category and corresponding sport ID based on squad ID patterns, league name, and league ID.

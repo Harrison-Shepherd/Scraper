@@ -14,6 +14,7 @@ class Fixture:
         self.regulation_periods = regulation_periods
         self.data = pd.DataFrame()
 
+    # Fetch fixture data for the league
     def fetch_data(self):
         logging.info(f"Fetching fixture data for league {self.league_id}.")
         
@@ -22,7 +23,10 @@ class Fixture:
             logging.info("League info not found, fetching leagues...")
             League.fetch_leagues()
         
+        # Fetch fixture data from the Champion Data API
         league_name_and_season = League.get_league_name_and_season(self.league_id)
+
+        # Sanitize the league name and season
         sanitized_league_name = sanitize_filename(league_name_and_season)
         
         url = f'http://mc.championdata.com/data/{self.league_id}/fixture.json?/'
@@ -35,11 +39,13 @@ class Fixture:
         
         data = response.json()
         
+        # Check if the data contains fixture and match information
         if 'fixture' in data and 'match' in data['fixture']:
             matches = data['fixture']['match']
             if not isinstance(matches, list):
                 matches = [matches]
             
+            # Filter out incomplete and scheduled matches
             if matches:
                 matches_df = pd.DataFrame(matches)
                 matches_df = matches_df[~matches_df['matchStatus'].isin(['incomplete', 'scheduled'])]  # Remove incomplete and scheduled matches
@@ -59,6 +65,8 @@ class Fixture:
                     'International & NZ Netball Womens': 8, 'Australian Netball Mens': 9,
                     'Australian Netball Womens': 10
                 }
+
+                # Assign the sport ID to the matches_df
                 sport_id = sport_id_map.get(sport_category, None)
                 matches_df['sportId'] = sport_id
                 matches_df['fixtureId'] = self.fixture_id
@@ -71,6 +79,7 @@ class Fixture:
                 matches_df['uniqueFixtureId'] = matches_df.apply(
                     lambda row: f"{self.fixture_id}-{row['matchId']}" if pd.notnull(row['matchId']) else 'Unknown', axis=1
                 )
+                # Log missing match IDs
                 if matches_df['uniqueFixtureId'].str.contains('Unknown').any():
                     logging.error(f"Some matches in league {self.league_id} are missing matchId, setting 'uniqueFixtureId' to 'Unknown'.")
 

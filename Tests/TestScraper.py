@@ -4,7 +4,7 @@ from Core.Scraper import Scraper
 from Core.FixtureDetails import Fixture
 from Core.MatchDetails import Match
 
-class TestScraper(unittest.TestCase):
+class TestScraper(unittest.TestCase): #TODO FIX
     @patch('Core.FixtureDetails.Fixture.fetch_data')
     @patch('Core.MatchDetails.Match.fetch_data')
     @patch('Core.MatchDetails.PeriodData.fetch_data')

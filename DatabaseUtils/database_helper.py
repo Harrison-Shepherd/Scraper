@@ -1,9 +1,13 @@
 import logging
 
+
+# Define a class to handle database operations
 class DatabaseHelper:
     def __init__(self, connection):
         self.connection = connection
 
+
+    # Define a method to fetch column names from a given database table
     def get_table_columns(self, table_name):
         """Fetch column names from a given database table."""
         try:
@@ -18,6 +22,7 @@ class DatabaseHelper:
             cursor.close()  # Ensure cursor is closed even if there's an error
         return columns
 
+    # Define a method to insert data dynamically into a table
     def insert_data_dynamically(self, table_name, data_dict, json_fields):
         """
         Insert or update data dynamically into the table by matching fields between data and table.
@@ -26,6 +31,7 @@ class DatabaseHelper:
             data_dict (dict): Dictionary containing data to be inserted.
             json_fields (dict): Dictionary containing 'required_fields' and 'optional_fields'.
         """
+        # Check if the table exists in the database
         try:
             # Extract 'required_fields' and 'optional_fields' from the JSON fields
             required_fields = json_fields.get('required_fields', [])
@@ -37,6 +43,7 @@ class DatabaseHelper:
             # Get the actual table columns from the database
             columns = self.get_table_columns(table_name)
 
+            # Check if the table exists and has columns
             if not columns:
                 logging.error(f"Table {table_name} does not exist or has no columns.")
                 return
@@ -72,6 +79,8 @@ class DatabaseHelper:
             primary_keys = self.get_primary_keys(table_name)
             update_fields = [field for field in matched_fields if field not in primary_keys]
 
+
+            # If there are fields to update, construct the update clause
             if update_fields:
                 update_clause = ', '.join([f"{field}=VALUES({field})" for field in update_fields])
                 query = f"""
@@ -79,23 +88,28 @@ class DatabaseHelper:
                 VALUES ({placeholders})
                 ON DUPLICATE KEY UPDATE {update_clause}
                 """
+            # If there are no fields to update, perform a simple insert
             else:
                 # If there are no fields to update, perform a simple insert
                 query = f"INSERT IGNORE INTO {table_name} ({columns_formatted}) VALUES ({placeholders})"
 
             # Logging the SQL query for debugging purposes (optional, can comment out if not needed)
             logging.debug(f"Executing query: {query} with values: {values}")
+            
 
             cursor = self.connection.cursor()
             cursor.execute(query, values)
             self.connection.commit()
 
+        # Handle exceptions
         except Exception as e:
             logging.error(f"Error inserting data into {table_name}: {e}. Data: {data_dict}")
             self.connection.rollback()  # Rollback in case of any error
         finally:
             cursor.close()  # Ensure cursor is closed even if an error occurs
 
+
+    # Define a method to fetch the primary key columns of a table
     def get_primary_keys(self, table_name):
         """Retrieve the primary key columns of a table."""
         try:

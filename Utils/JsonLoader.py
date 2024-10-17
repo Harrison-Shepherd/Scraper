@@ -2,11 +2,15 @@ import os
 import json
 import logging
 
+
+# Function to load JSON field mappings for each table
 def load_json_fields():
     base_dir = os.path.abspath(os.path.dirname(__file__))
     json_dir = os.path.join(base_dir, '..', 'Assets', 'jsons', 'unique fields')
     json_fields = {}
 
+
+    # Load JSON field mappings for each table
     try:
         with open(os.path.join(json_dir, 'fixtureFields.json'), 'r') as file:
             data = json.load(file)
@@ -42,6 +46,7 @@ def load_json_fields():
         logging.info("JSON field mappings loaded successfully.")
         return json_fields
 
+    # Handle exceptions
     except Exception as e:
         logging.error(f"Error loading JSON fields: {e}")
         raise

@@ -6,6 +6,7 @@ from Utils.sanitize_filename import sanitize_filename
 from Core.LeaguesList import League
 
 class Match:
+    # Initialize the Match object with the league_id, match_id, fixture_id, and sport_id
     def __init__(self, league_id, match_id, fixture_id, sport_id):
         self.league_id = league_id
         self.match_id = match_id
@@ -13,10 +14,12 @@ class Match:
         self.sport_id = sport_id
         self.data = pd.DataFrame()
 
+    # Fetch data for the match
     def fetch_data(self):
         league_name_and_season = League.get_league_name_and_season(self.league_id)
         league_name_and_season = sanitize_filename(league_name_and_season)
     
+        
         url = f'https://mc.championdata.com/data/{self.league_id}/{self.match_id}.json'
         response = requests.get(url)
         
@@ -27,6 +30,7 @@ class Match:
     
         data = response.json()
         
+        # Check if the data contains player stats
         if ('matchStats' in data and isinstance(data['matchStats'], dict) and
             'playerStats' in data['matchStats'] and isinstance(data['matchStats']['playerStats'], dict) and
             'player' in data['matchStats']['playerStats']):
@@ -77,12 +81,14 @@ class Match:
             logging.warning(f"Player stats not found or incomplete for match {self.match_id} in league {self.league_id}.")
             print(f"Player stats not found or incomplete for match {self.match_id} in league {self.league_id}. Skipping this match.")
 
+# Define the PeriodData class to fetch period stats for a match
 class PeriodData:
     def __init__(self, league_id, match_id):
         self.league_id = league_id
         self.match_id = str(match_id)  
         self.data = pd.DataFrame()
     
+    # Fetch period stats for the match
     def fetch_data(self):
         logging.info(f"Fetching period stats for match {self.match_id} in league {self.league_id}")
     
@@ -95,6 +101,7 @@ class PeriodData:
     
         json_data = response.json()
     
+        # Check if the data contains player period stats
         if ('matchStats' in json_data and
             'playerPeriodStats' in json_data['matchStats'] and
             'player' in json_data['matchStats']['playerPeriodStats']):
@@ -111,12 +118,15 @@ class PeriodData:
         else:
             logging.error(f"Player period stats not found or incomplete for match {self.match_id} in league {self.league_id}.")  
 
+
+# Define the ScoreFlow class to fetch score flow data for a match
 class ScoreFlow:
     def __init__(self, league_id, match_id):
         self.league_id = league_id
         self.match_id = match_id
         self.data = pd.DataFrame()
     
+    # Fetch score flow data for the match
     def fetch_data(self):
         url = f'https://mc.championdata.com/data/{self.league_id}/{self.match_id}.json'
         response = requests.get(url)
@@ -126,14 +136,17 @@ class ScoreFlow:
             print(f"Failed to retrieve data: {response.status_code}")
             return
     
+        # Extract score flow data
         match_data = response.json()
         score_flow = match_data.get('matchStats', {}).get('scoreFlow', {}).get('score', [])
-    
+
+        # Check if score flow data exists
         if not score_flow:
             logging.warning(f"No score flow data found for match {self.match_id} in league {self.league_id}.")
             print(f"No score flow data found for match {self.match_id} in league {self.league_id}.")
             return
     
+        # Normalize the JSON data into a DataFrame
         df = pd.json_normalize(score_flow)
         df['matchId'] = self.match_id
         df['scoreFlowId'] = df['matchId'].astype(str) + "_1"  # Just an example for generating scoreFlowId

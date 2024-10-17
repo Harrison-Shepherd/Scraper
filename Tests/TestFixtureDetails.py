@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch, MagicMock
 from Core.FixtureDetails import Fixture
 
-class TestFixtureDetails(unittest.TestCase):
+class TestFixtureDetails(unittest.TestCase): #TODO FIX
     @patch('Core.FixtureDetails.requests.get')
     def test_fetch_data_netball_womens_nz(self, mock_get):
         # Mock the API response for a Netball Women's NZ fixture

@@ -6,8 +6,8 @@ import re
 import traceback
 from DatabaseUtils.SqlConnector import connect
 from DatabaseUtils.database_helper import DatabaseHelper
-from Utils.logger import setup_logging  # Updated logger import
-from Utils.JsonLoader import load_json_fields  # Import new function
+from Utils.logger import setup_logging  
+from Utils.JsonLoader import load_json_fields  
 from Core.LeaguesList import League
 from Core.FixtureDetails import Fixture
 from Core.MatchDetails import Match
@@ -27,7 +27,7 @@ class Scraper:
         self.connection.autocommit = False  # Turn off auto-commit
         self.db_helper = DatabaseHelper(self.connection)
 
-        # Load JSON fields by calling the new function from json_loader.py
+        # Load JSON fields for each table
         self.json_fields = load_json_fields()
         self.fixture_fields = self.json_fields['fixture_fields']
         self.match_fields = self.json_fields['match_fields']
@@ -46,17 +46,19 @@ class Scraper:
             'NRL Womens': 4,
             'FAST5 Mens': 5, 
             'FAST5 Womens': 6, 
-            'International & NZ Netball Mens': 7,
+            'Netball Mens': 7,
             'Netball Womens NZ': 8,
             'Netball Womens Australia': 9,
-            'Netball Womens International': 10
+            'Netball Womens International': 10,
+            'Netball Unknown': 11,
+            'NRL Unknown': 12
         }
 
         # Fetch leagues
         leagues_df, _ = League.fetch_leagues()
         print(f"Fetched {len(leagues_df)} leagues.")
 
-        fallback_player_counter = {}
+        fallback_player_counter = {} # Initialize the fallback player counter
 
         for _, league in leagues_df.iterrows():
             league_id = league['id']
@@ -70,13 +72,13 @@ class Scraper:
             if fixture.data.empty:
                 continue
 
-            # Extract squad_ids from fixture data
+            # Extract squad ids from fixture data
             squad_ids = pd.unique(
                 fixture.data[['homeSquadId', 'awaySquadId']].values.ravel()
             ).tolist()
             print(f"Extracted squad IDs: {squad_ids}")
 
-            # Use the determine_sport_category function to filter the sport category and ID
+            # filter sport category and sport id using sport category function
             sport_category, sport_id = determine_sport_category(
                 regulation_periods,
                 squad_ids,
@@ -86,6 +88,10 @@ class Scraper:
 
             # Normalize the sport category for logging and comparison
             sport_category = sport_category.strip().title()  # Normalize case and remove extra spaces
+            sport_category = re.sub(r'\bNz\b', 'NZ', sport_category)  # Preserve 'NZ' in uppercase
+            sport_category = re.sub(r'\bFast5\b', 'FAST5', sport_category)  # Preserve 'FAST5' in uppercase
+            sport_category = re.sub(r'\bNrl\b', 'NRL', sport_category)  # Ensure 'NRL' stays uppercase
+            sport_category = re.sub(r'\bAfl\b', 'AFL', sport_category)  # Ensure 'AFL' stays uppercase
 
             # Log the normalized category
             self.info_logger.info(f"Normalized sport category: '{sport_category}' for league: {league_id}")
@@ -153,6 +159,10 @@ class Scraper:
                     # Ensure matchName is populated (fallback if it's None)
                     match_name = match_row.get('matchName', 'Unknown Match')
 
+                    # Log uniqueMatchId
+                    uniqueMatchId = f"{match_id}-{fixture_id}"
+                    self.info_logger.info(f"Generated uniqueMatchId: {uniqueMatchId} for match {match_id}.")
+
                     # Collect fixture data
                     fixture_data = {
                         **match_row,
@@ -160,8 +170,8 @@ class Scraper:
                         'sportId': sport_id,
                         'matchId': match_id,
                         'uniqueFixtureId': uniqueFixtureId,
-                        'matchName': match_name,  # Ensure matchName is included
-                        'uniqueSportId': uniqueSportId  # Add uniqueSportId to fixture data
+                        'matchName': match_name,  
+                        'uniqueSportId': uniqueSportId  
                     }
                     fixture_data_list.append(fixture_data)
 
@@ -169,7 +179,17 @@ class Scraper:
                     for squad_side in ['home', 'away']:
                         squad_id = str(match_row.get(f'{squad_side}SquadId', 'Unknown'))
                         squad_name = str(match_row.get(f'{squad_side}SquadName', 'Unknown Squad'))
+
+                        # Log warnings if squadId or squadName are missing
+                        if not squad_id or squad_id == 'Unknown':
+                            self.info_logger.warning(f"Missing squadId for {squad_side} side in match {match_id}. Using fallback value.")
+                        if not squad_name or squad_name == 'Unknown Squad':
+                            self.info_logger.warning(f"Missing squadName for {squad_side} side in match {match_id}. Using fallback value.")
+
+                        # Generate uniqueSquadId
                         uniqueSquadId = f"{squad_id}-{squad_name}"
+                        self.info_logger.info(f"Generated uniqueSquadId: {uniqueSquadId} for {squad_side} side in match {match_id}.")
+
                         squad_info_data = {
                             'squadId': squad_id,
                             'squadName': squad_name,
@@ -188,12 +208,11 @@ class Scraper:
                     else:
                         print(f"Fetched {len(match.data)} match records for match {match_id}.")
 
-
                     # Process and collect match data, ensuring correct pairing of squadId and squadName
                     for _, row in match.data.iterrows():
                         player_id = str(row.get('playerId', 'Unknown'))
                         squad_id = str(row.get('squadId', 'Unknown'))
-                        squad_name = str(row.get('squadName', 'Unknown Squad'))  # Use squadName directly from the row
+                        squad_name = str(row.get('squadName', 'Unknown Squad'))  # Use squadName directly from the row #TODO check why the output is different from inserted data
 
                         # Check if player_id is None or empty and generate a fallback player_id
                         if player_id == '0' or not player_id.isdigit():
@@ -206,13 +225,16 @@ class Scraper:
                             # Generate a fallback playerId like 'unknownPlayer1'
                             player_id = f"unknownPlayer{fallback_player_counter[match_id]}"
 
+                        # Log uniquePlayerId
+                        uniquePlayerId = f"{player_id}-{squad_id}"
+                        self.info_logger.info(f"Generated uniquePlayerId: {uniquePlayerId} for player {player_id} in match {match_id}.")
+
                         row['matchId'] = str(match_id)
                         row['playerId'] = player_id  # update row with fallback playerId
                         row['squadId'] = squad_id
                         row['squadName'] = squad_name
 
                         # Generate unique player ID and match ID
-                        uniquePlayerId = f"{player_id}-{squad_id}"
                         uniqueMatchId = f"{match_id}-{player_id}"
                         uniqueSquadId = f"{squad_id}-{squad_name}"
                         uniqueSportId = f"{sport_id}-{fixture_id}"

@@ -5,6 +5,7 @@ import os
 log_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "Logs")
 os.makedirs(log_dir, exist_ok=True)
 
+# Function to setup logging
 def setup_logging():
     # Create loggers
     info_logger = logging.getLogger("info_logger")

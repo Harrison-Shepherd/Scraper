@@ -2,6 +2,7 @@ import json
 import os
 from SqlConnector import connect
 
+# Function to drop all tables from the current database
 def drop_all_tables(connection):
     """Drop all tables from the current database, including those with foreign key constraints."""
     try:
@@ -25,12 +26,15 @@ def drop_all_tables(connection):
         cursor.execute("SET FOREIGN_KEY_CHECKS = 1;")
         print("Foreign key checks enabled.")
 
+        # Commit the changes and close the cursor
         connection.commit()
         cursor.close()
         print("Successfully dropped all tables.")
     except Exception as e:
         print(f"Error dropping tables: {e}")
 
+
+# Function to select the database before executing any SQL commands
 def select_database(connection, db_name):
     """Select the database before executing any SQL commands."""
     try:
@@ -40,6 +44,7 @@ def select_database(connection, db_name):
     except Exception as e:
         print(f"Error selecting database: {e}")
 
+# Function to execute the SQL script from the given file
 def execute_sql_script(connection, sql_file):
     """Execute the SQL script from the given file to create tables."""
     try:
@@ -55,6 +60,7 @@ def execute_sql_script(connection, sql_file):
     except Exception as e:
         print(f"Error executing {sql_file}: {e}")
 
+# Function to create tables by executing SQL scripts
 def create_tables():
     """Read the sql_file_paths.json and execute each SQL script to create tables."""
     try:
@@ -63,10 +69,12 @@ def create_tables():
 
         connection = connect()
 
+        # Check if the connection is successful
         if connection:
             # Select the PowerData database
             select_database(connection, 'PowerData')
 
+            # Execute the SQL scripts for each sport
             for sport, sql_files in sport_sql_files.items():
                 print(f"Creating tables for {sport}...")
                 for category, sql_file in sql_files.items():
