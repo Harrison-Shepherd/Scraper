@@ -6,13 +6,14 @@ from Utils.sanitize_filename import sanitize_filename
 from Core.LeaguesList import League
 
 class Match:
-    # Initialize the Match object with the league_id, match_id, fixture_id, and sport_id
-    def __init__(self, league_id, match_id, fixture_id, sport_id):
+    # Initialize the Match object with the league_id, match_id, fixture_id, and sport_id and fixture year
+    def __init__(self, league_id, match_id, fixture_id, sport_id, fixture_year):
         self.league_id = league_id
         self.match_id = match_id
         self.fixture_id = fixture_id
         self.sport_id = sport_id
         self.data = pd.DataFrame()
+        self.fixture_year = fixture_year
 
     # Fetch data for the match
     def fetch_data(self):
@@ -58,10 +59,11 @@ class Match:
             box['fixtureId'] = self.fixture_id
             box['sportId'] = self.sport_id
             box['matchId'] = self.match_id
+            box['fixtureYear'] = self.fixture_year
 
             # Ensure playerId is populated
             if box['playerId'].isnull().any():
-                logging.warning(f"Missing playerId for some rows in match {self.match_id}.")
+                logging.error(f"Missing playerId for some rows in match {self.match_id}.")
                 print(f"Missing playerId for some rows in match {self.match_id}. Continuing anyway.")
 
             # Generate Unique Player ID
@@ -78,7 +80,7 @@ class Match:
             # Store processed data
             self.data = box
         else:
-            logging.warning(f"Player stats not found or incomplete for match {self.match_id} in league {self.league_id}.")
+            logging.error(f"Player stats not found or incomplete for match {self.match_id} in league {self.league_id}.")
             print(f"Player stats not found or incomplete for match {self.match_id} in league {self.league_id}. Skipping this match.")
 
 # Define the PeriodData class to fetch period stats for a match
@@ -142,7 +144,7 @@ class ScoreFlow:
 
         # Check if score flow data exists
         if not score_flow:
-            logging.warning(f"No score flow data found for match {self.match_id} in league {self.league_id}.")
+            logging.error(f"No score flow data found for match {self.match_id} in league {self.league_id}.")
             print(f"No score flow data found for match {self.match_id} in league {self.league_id}.")
             return
     

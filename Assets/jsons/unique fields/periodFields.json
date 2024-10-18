@@ -7,7 +7,8 @@
       "period",
       "uniqueMatchId",
       "uniquePlayerId",
-      "uniquePeriodId"
+      "uniquePeriodId",
+      "fixtureYear"
     ],
     "optional_fields": [
       "possessionsContested",

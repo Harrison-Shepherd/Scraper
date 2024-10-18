@@ -77,6 +77,7 @@ CREATE TABLE NRL_womens_match (
   sentOffs INT DEFAULT NULL,
   sinBins INT DEFAULT NULL,
   onReports INT DEFAULT NULL,
+  fixtureYear VARCHAR(50) NOT NULL,
 
   -- Precomputed Columns (calculated in the application layer)
   uniqueFixtureId VARCHAR(255) NOT NULL,

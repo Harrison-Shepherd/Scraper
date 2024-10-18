@@ -76,6 +76,7 @@ CREATE TABLE netball_womens_australia_match (
   goal1 INT DEFAULT NULL,
   attempt2 INT DEFAULT NULL,
   attempt1 INT DEFAULT NULL,
+  fixtureYear VARCHAR(50) NOT NULL,
 
   -- Precomputed Columns (calculated in the application layer)
   uniqueFixtureId VARCHAR(255) NOT NULL,

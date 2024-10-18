@@ -13,7 +13,8 @@
       "uniqueSquadId",
       "uniqueSportId",
       "uniqueMatchId",
-      "uniqueFixtureId"
+      "uniqueFixtureId",
+      "fixtureYear"
     ],
     "optional_fields": [
       "debut",

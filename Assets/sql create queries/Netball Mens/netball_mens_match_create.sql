@@ -49,6 +49,7 @@ CREATE TABLE netball_mens_match (
   pickups INT DEFAULT NULL,
   gainToGoalPerc INT DEFAULT NULL,
   intercepts INT DEFAULT NULL,
+  fixtureYear VARCHAR(50) NOT NULL,
 
   -- Match Information
   homeId VARCHAR(50) NOT NULL,

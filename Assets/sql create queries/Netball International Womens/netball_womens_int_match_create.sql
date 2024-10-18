@@ -77,6 +77,7 @@ CREATE TABLE netball_womens_international_match (
   feedWithAttempt INT DEFAULT NULL,
   unforcedTurnovers INT DEFAULT NULL,
   gainToGoalPerc INT DEFAULT NULL,
+  fixtureYear VARCHAR(50) NOT NULL,
 
   -- Precomputed Columns (calculated in the application layer)
   uniqueFixtureId VARCHAR(255) NOT NULL,

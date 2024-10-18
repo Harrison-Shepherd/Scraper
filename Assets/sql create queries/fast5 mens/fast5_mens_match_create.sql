@@ -48,6 +48,7 @@ CREATE TABLE fast5_mens_match (
   intercepts INT DEFAULT NULL,
   goals3 INT DEFAULT NULL,
   goals2 INT DEFAULT NULL,
+  fixtureYear VARCHAR(50) NOT NULL,
 
   -- Additional Information
   shortDisplayName VARCHAR(50) DEFAULT NULL,

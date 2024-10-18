@@ -54,6 +54,7 @@ CREATE TABLE netball_womens_nz_match (
   surname VARCHAR(45) NOT NULL,
   displayName VARCHAR(45) NOT NULL,
   squadName VARCHAR(45) NOT NULL,
+  fixtureYear VARCHAR(50) NOT NULL,
   
   -- Match Information
   homeId VARCHAR(50) NOT NULL,

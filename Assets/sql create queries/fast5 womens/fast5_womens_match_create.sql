@@ -80,6 +80,7 @@ CREATE TABLE fast5_womens_match (
   badPasses INT DEFAULT NULL,
   badHands INT DEFAULT NULL,
   breaks INT DEFAULT NULL,
+  fixtureYear VARCHAR(50) NOT NULL,
   
   -- Miscellaneous
   tossUpWin INT DEFAULT NULL,

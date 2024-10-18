@@ -15,13 +15,13 @@ def setup_logging():
     info_logger.propagate = False
     error_logger.propagate = False
 
+    # Set logging levels
+    info_logger.setLevel(logging.INFO)
+    error_logger.setLevel(logging.WARNING)
+
     # Create handlers
     info_handler = logging.FileHandler(os.path.join(log_dir, 'info.log'), mode='w')
     error_handler = logging.FileHandler(os.path.join(log_dir, 'error.log'), mode='w')
-
-    # Set logging levels
-    info_handler.setLevel(logging.INFO)
-    error_handler.setLevel(logging.ERROR)
 
     # Define formatters
     formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
@@ -30,12 +30,12 @@ def setup_logging():
     info_handler.setFormatter(formatter)
     error_handler.setFormatter(formatter)
 
+    # Set handler levels
+    info_handler.setLevel(logging.DEBUG)  # Capture DEBUG and INFO levels
+    error_handler.setLevel(logging.WARNING)  # Capture WARNING and above levels
+
     # Add handlers to respective loggers
     info_logger.addHandler(info_handler)
     error_logger.addHandler(error_handler)
-
-    # Set levels for the loggers themselves
-    info_logger.setLevel(logging.INFO)
-    error_logger.setLevel(logging.ERROR)
 
     return info_logger, error_logger

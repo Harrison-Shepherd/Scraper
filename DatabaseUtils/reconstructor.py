@@ -1,6 +1,7 @@
 import json
 import os
 from SqlConnector import connect
+import logging
 
 # Function to drop all tables from the current database
 def drop_all_tables(connection):
@@ -31,6 +32,7 @@ def drop_all_tables(connection):
         cursor.close()
         print("Successfully dropped all tables.")
     except Exception as e:
+        logging.error(f"Error dropping tables: {e}")
         print(f"Error dropping tables: {e}")
 
 
@@ -42,6 +44,7 @@ def select_database(connection, db_name):
         cursor.execute(f"USE `{db_name}`;")
         print(f"Database selected: {db_name}")
     except Exception as e:
+        logging.error(f"Error selecting database: {e}")
         print(f"Error selecting database: {e}")
 
 # Function to execute the SQL script from the given file
@@ -58,6 +61,7 @@ def execute_sql_script(connection, sql_file):
         print(f"Successfully executed: {sql_file}")
         cursor.close()
     except Exception as e:
+        logging.error(f"Error executing {sql_file}: {e}")
         print(f"Error executing {sql_file}: {e}")
 
 # Function to create tables by executing SQL scripts
@@ -86,8 +90,10 @@ def create_tables():
 
             connection.close()
         else:
+            logging.error("Failed to connect to the database.")
             print("Failed to connect to the database.")
     except Exception as e:
+        logging.error(f"Error in create_tables: {e}")
         print(f"Error in create_tables: {e}")                                                               
 
 if __name__ == "__main__":
@@ -112,4 +118,5 @@ if __name__ == "__main__":
         finally:
             connection.close()
     else:
+        logging.error("Failed to connect to the database.")
         print("Failed to connect to the database.")

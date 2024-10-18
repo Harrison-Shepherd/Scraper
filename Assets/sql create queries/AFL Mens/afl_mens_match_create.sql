@@ -44,6 +44,7 @@ CREATE TABLE afl_mens_match (
   matchId VARCHAR(50) NOT NULL,
   homeId VARCHAR(50) NOT NULL,
   kicksEffective INT DEFAULT NULL,
+  fixtureYear VARCHAR(50) NOT NULL,
 
   -- Precomputed Columns
   uniqueFixtureId VARCHAR(255) NOT NULL,

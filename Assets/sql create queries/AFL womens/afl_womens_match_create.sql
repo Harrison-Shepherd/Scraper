@@ -43,6 +43,8 @@ CREATE TABLE afl_womens_match (
   surname VARCHAR(50) DEFAULT NULL,
   dob DATE DEFAULT NULL,
   height INT DEFAULT NULL,
+  fixtureYear VARCHAR(50) NOT NULL,
+
 
   -- Team Information
   squadShortName VARCHAR(5) DEFAULT NULL,

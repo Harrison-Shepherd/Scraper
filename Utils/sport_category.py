@@ -1,7 +1,6 @@
 import re
 import json
 import os
-import logging
 
 # Get the directory path for the Assets folder
 assets_folder = os.path.join(os.path.dirname(__file__), '..', 'Assets/jsons')
@@ -18,36 +17,32 @@ def determine_sport_category(regulation_periods, squad_ids, league_name, league_
     Determine the sport category and corresponding sport ID based on squad ID patterns, league name, and league ID.
     Ensures New Zealand leagues are in NZ folders and AFL is only split into AFL Mens/Womens.
     """
-    
+
     # Initialize sport category and sport_id as None
-    sport_category = 'Unknown_Sport'
+    sport_category = 'Unknown Sport'
     sport_id = None
-    
+
     # Strip the year from the league name to prevent interference with filtering
     league_name_cleaned = re.sub(r"\(\d{4}\)", "", league_name).strip()  # Remove years in parentheses, e.g., "(2009)"
-    
+
     # AFL Check
     if "AFL" in league_name_cleaned.upper():
         # Check the squad ID to determine AFL Men's or Women's
         for squad_id in squad_ids:
             str_squad_id = str(squad_id)
             if str_squad_id.startswith('1') or str_squad_id.startswith('9815') or str_squad_id.startswith('9835'):
-                logging.info(f"AFL Mens detected for league {league_id} with squad ID {str_squad_id}")
                 return "AFL Mens", 1
             elif str_squad_id.startswith('73') or str_squad_id.startswith('78'):
-                logging.info(f"AFL Womens detected for league {league_id} with squad ID {str_squad_id}")
                 return "AFL Womens", 2
-    
+
     # FAST5 Check (prioritize filtering for FAST5 by checking for "FAST")
     if "FAST" in league_name_cleaned.upper():
         # If the league name contains FAST, further filter by SquadID
         for squad_id in squad_ids:
             str_squad_id = str(squad_id)
             if str_squad_id.startswith(('95', '97')):  # FAST5 Men's SquadIDs
-                logging.info(f"FAST5 Mens detected for league {league_id} with squad ID {str_squad_id}")
                 return "FAST5 Mens", 5
             elif str_squad_id.startswith('88'):  # FAST5 Women's SquadIDs 
-                logging.info(f"FAST5 Womens detected for league {league_id} with squad ID {str_squad_id}")
                 return "FAST5 Womens", 6
 
     # Load league filters from the JSON file
@@ -56,60 +51,46 @@ def determine_sport_category(regulation_periods, squad_ids, league_name, league_
     nz_leagues = league_filters["nz_leagues"]
     afl_mens_leagues = league_filters["afl_mens_leagues"]
     afl_womens_leagues = league_filters["afl_womens_leagues"]
-    
+
     # Check for league name in pre-determined lists (now using cleaned league name)
     if league_name_cleaned in international_leagues:
-        logging.info(f"Netball Womens International detected for league {league_id}")
         return "Netball Womens International", 10  # International folder
     elif league_name_cleaned in australian_leagues:
-        logging.info(f"Netball Womens Australia detected for league {league_id}")
         return "Netball Womens Australia", 9  # Australian folder
     elif league_name_cleaned in nz_leagues:
-        logging.info(f"Netball Womens NZ detected for league {league_id}")
         return "Netball Womens NZ", 8  # NZ folder
     elif league_name_cleaned in afl_mens_leagues:
-        logging.info(f"AFL Mens detected for league {league_id}")
         return "AFL Mens", 1  # AFL Mens folder
     elif league_name_cleaned in afl_womens_leagues:
-        logging.info(f"AFL Womens detected for league {league_id}")
         return "AFL Womens", 2  # AFL Womens folder
-    
+
     # Squad ID filtering (fallback if not captured by league filtering)
     for squad_id in squad_ids:
         str_squad_id = str(squad_id)  # Convert squad_id to string for pattern matching
-        
+
         # Specific rules for NRL
         if regulation_periods == 2:
             if str_squad_id.startswith(('3', '81', '74')):
-                logging.info(f"NRL Mens detected for league {league_id} with squad ID {str_squad_id}")
                 return 'NRL Mens', 3  # NRL Men's
             elif str_squad_id.startswith(('92', '96', '97')):
-                logging.info(f"NRL Womens detected for league {league_id} with squad ID {str_squad_id}")
                 return 'NRL Womens', 4  # NRL Women's
 
         # Specific rules for Netball
         elif regulation_periods == 4:
             if str_squad_id.startswith('949'):
-                logging.info(f"Netball Mens detected for league {league_id} with squad ID {str_squad_id}")
                 return 'Netball Mens', 7  # International & NZ Netball Mens
             elif str_squad_id.startswith(('71', '72', '73', '75', '77', '79')):
-                logging.info(f"Netball Womens NZ detected for league {league_id} with squad ID {str_squad_id}")
                 return 'Netball Womens NZ', 8  # NZ Women's Netball
             elif str_squad_id.startswith(('78', '80', '81', '91')):
-                logging.info(f"Netball Womens Australia detected for league {league_id} with squad ID {str_squad_id}")
                 return 'Netball Womens Australia', 9  # Australian Women's Netball
             elif str_squad_id.startswith(('76', '83', '87', '95', '97')):
-                logging.info(f"Netball Womens International detected for league {league_id} with squad ID {str_squad_id}")
                 return 'Netball Womens International', 10  # International Women's Netball  
 
     # Fallback if nothing matches
     if regulation_periods == 4:
-        logging.warning(f"Netball Unknown detected for league {league_id}")
         return 'Netball Unknown', 11  # General fallback for Netball
     elif regulation_periods == 2:
-        logging.warning(f"NRL Unknown detected for league {league_id}")
         return 'NRL Unknown', 12  # General fallback for NRL
-    
+
     # Return the category and ID if all else fails
-    logging.warning(f"Unknown sport category detected for league {league_id}. No match found.")
-    return sport_category, sport_id
+    return sport_category, sport_id  

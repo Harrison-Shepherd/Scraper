@@ -1,4 +1,5 @@
 import logging
+from mysql.connector import Error as mysql_error
 import json
 import os
 import pandas as pd
@@ -25,7 +26,7 @@ class Scraper:
             self.error_logger.error("Failed to connect to the database.")
             raise ConnectionError("Database connection failed.")
         self.connection.autocommit = False  # Turn off auto-commit
-        self.db_helper = DatabaseHelper(self.connection)
+        self.db_helper = DatabaseHelper(self.connection, self.info_logger, self.error_logger)
 
         # Load JSON fields for each table
         self.json_fields = load_json_fields()
@@ -40,25 +41,25 @@ class Scraper:
     def scrape_entire_database(self):
         # Define the sport_id_map
         sport_id_map = {
-            'AFL Mens': 1, 
-            'AFL Womens': 2, 
-            'NRL Mens': 3, 
-            'NRL Womens': 4,
-            'FAST5 Mens': 5, 
-            'FAST5 Womens': 6, 
-            'Netball Mens': 7,
-            'Netball Womens NZ': 8,
-            'Netball Womens Australia': 9,
-            'Netball Womens International': 10,
-            'Netball Unknown': 11,
-            'NRL Unknown': 12
+            'afl mens': 1, 
+            'afl womens': 2, 
+            'nrl mens': 3, 
+            'nrl womens': 4,
+            'fast5 mens': 5, 
+            'fast5 womens': 6, 
+            'netball mens': 7,
+            'netball womens nz': 8,
+            'netball womens australia': 9,
+            'netball womens international': 10,
+            'netball unknown': 11,
+            'nrl unknown': 12
         }
 
         # Fetch leagues
         leagues_df, _ = League.fetch_leagues()
         print(f"Fetched {len(leagues_df)} leagues.")
 
-        fallback_player_counter = {} # Initialize the fallback player counter
+        fallback_player_counter = {}  # Initialize the fallback player counter
 
         for _, league in leagues_df.iterrows():
             league_id = league['id']
@@ -66,7 +67,7 @@ class Scraper:
             regulation_periods = league['regulationPeriods']
             fixture_id = league['id']
 
-            fixture = Fixture(league_id, fixture_id, regulation_periods)
+            fixture = Fixture(league_id, fixture_id, regulation_periods, self.info_logger, self.error_logger)
             fixture.fetch_data()
             print(f"Fetched {len(fixture.data)} fixtures for league {league_id}.")
             if fixture.data.empty:
@@ -78,7 +79,7 @@ class Scraper:
             ).tolist()
             print(f"Extracted squad IDs: {squad_ids}")
 
-            # filter sport category and sport id using sport category function
+            # Filter sport category and sport id using sport category function
             sport_category, sport_id = determine_sport_category(
                 regulation_periods,
                 squad_ids,
@@ -87,21 +88,40 @@ class Scraper:
             )
 
             # Normalize the sport category for logging and comparison
-            sport_category = sport_category.strip().title()  # Normalize case and remove extra spaces
-            sport_category = re.sub(r'\bNz\b', 'NZ', sport_category)  # Preserve 'NZ' in uppercase
-            sport_category = re.sub(r'\bFast5\b', 'FAST5', sport_category)  # Preserve 'FAST5' in uppercase
-            sport_category = re.sub(r'\bNrl\b', 'NRL', sport_category)  # Ensure 'NRL' stays uppercase
-            sport_category = re.sub(r'\bAfl\b', 'AFL', sport_category)  # Ensure 'AFL' stays uppercase
+            sport_category = sport_category.strip()
+            sport_category = re.sub(r'\s+', ' ', sport_category)  # Remove extra spaces
+            sport_category_lower = sport_category.lower()
 
             # Log the normalized category
             self.info_logger.info(f"Normalized sport category: '{sport_category}' for league: {league_id}")
+            self.info_logger.debug(f"Sport category representation: {repr(sport_category)}")
+            self.info_logger.debug(f"Length of sport_category: {len(sport_category)}")
 
-            # Check if the normalized sport category exists in the sport_id_map
-            if sport_category in sport_id_map:
-                sport_id = sport_id_map[sport_category]
+            # Convert the sport_id_map keys to lowercase
+            sport_id_map_lower = {k.lower(): v for k, v in sport_id_map.items()}
+
+            # Log the keys of sport_id_map_lower
+            self.info_logger.debug("Keys in sport_id_map_lower:")
+            for key in sport_id_map_lower.keys():
+                self.info_logger.debug(f"Key: '{key}', repr: {repr(key)}, length: {len(key)}")
+
+            # Check if the normalized sport category exists in the sport_id_map_lower
+            if sport_category_lower in sport_id_map_lower:
+                sport_id = sport_id_map_lower[sport_category_lower]
+                self.info_logger.info(f"Sport ID found: {sport_id} for category: '{sport_category}'")
             else:
                 self.error_logger.error(f"Sport category '{sport_category}' not found in sport_id_map for league {league_id}.")
+                self.error_logger.error(f"Available sport categories: {list(sport_id_map.keys())}")
+                self.error_logger.error(f"Sport category representation: {repr(sport_category)}")
+                self.error_logger.error(f"Length of sport_category: {len(sport_category)}")
+                # Log the keys of sport_id_map_lower
+                self.error_logger.error("Keys in sport_id_map_lower:")
+                for key in sport_id_map_lower.keys():
+                    self.error_logger.error(f"Key: '{key}', repr: {repr(key)}, length: {len(key)}")
                 sport_id = None  # If the category is not in the map, log and skip to avoid failures
+
+            match_year = re.search(r'\b(20\d{2})\b', league_name)
+            fixture_year = match_year.group(1) if match_year else None
 
             # Start the transaction
             try:
@@ -139,7 +159,7 @@ class Scraper:
                 score_flow_data_list = []
 
                 # For table names
-                table_prefix = sport_category.lower().replace(' ', '_')
+                table_prefix = sport_category_lower.replace(' ', '_')
                 fixture_table = f"{table_prefix}_fixture"
                 match_table = f"{table_prefix}_match"
                 period_table = f"{table_prefix}_period"
@@ -182,9 +202,9 @@ class Scraper:
 
                         # Log warnings if squadId or squadName are missing
                         if not squad_id or squad_id == 'Unknown':
-                            self.info_logger.warning(f"Missing squadId for {squad_side} side in match {match_id}. Using fallback value.")
+                            self.error_logger.warning(f"Missing squadId for {squad_side} side in match {match_id}. Using fallback value.")
                         if not squad_name or squad_name == 'Unknown Squad':
-                            self.info_logger.warning(f"Missing squadName for {squad_side} side in match {match_id}. Using fallback value.")
+                            self.error_logger.warning(f"Missing squadName for {squad_side} side in match {match_id}. Using fallback value.")
 
                         # Generate uniqueSquadId
                         uniqueSquadId = f"{squad_id}-{squad_name}"
@@ -200,19 +220,19 @@ class Scraper:
                         squad_info_list.append(squad_info_data)
 
                     # Fetch match data
-                    match = Match(league_id, match_id, fixture_id, sport_id)
+                    match = Match(league_id, match_id, fixture_id, sport_id, fixture_year)
                     match.fetch_data()
 
                     if match.data.empty:
-                        self.info_logger.warning(f"Match data is empty for matchId: {match_id}, leagueId: {league_id}.")
+                        self.error_logger.warning(f"Match data is empty for matchId: {match_id}, leagueId: {league_id}.")
                     else:
                         print(f"Fetched {len(match.data)} match records for match {match_id}.")
 
-                    # Process and collect match data, ensuring correct pairing of squadId and squadName
+                    # Process and collect match data
                     for _, row in match.data.iterrows():
                         player_id = str(row.get('playerId', 'Unknown'))
                         squad_id = str(row.get('squadId', 'Unknown'))
-                        squad_name = str(row.get('squadName', 'Unknown Squad'))  # Use squadName directly from the row #TODO check why the output is different from inserted data
+                        squad_name = str(row.get('squadName', 'Unknown Squad'))
 
                         # Check if player_id is None or empty and generate a fallback player_id
                         if player_id == '0' or not player_id.isdigit():
@@ -230,11 +250,11 @@ class Scraper:
                         self.info_logger.info(f"Generated uniquePlayerId: {uniquePlayerId} for player {player_id} in match {match_id}.")
 
                         row['matchId'] = str(match_id)
-                        row['playerId'] = player_id  # update row with fallback playerId
+                        row['playerId'] = player_id  # Update row with fallback playerId
                         row['squadId'] = squad_id
                         row['squadName'] = squad_name
 
-                        # Generate unique player ID and match ID
+                        # Generate unique IDs
                         uniqueMatchId = f"{match_id}-{player_id}"
                         uniqueSquadId = f"{squad_id}-{squad_name}"
                         uniqueSportId = f"{sport_id}-{fixture_id}"
@@ -279,8 +299,8 @@ class Scraper:
 
                             # Fetch the playerId and squadId for generating uniquePlayerId
                             player_id = str(row.get('playerId', 'Unknown'))
-                            squad_id = str(row.get('squadId', 'Unknown'))  # Use squadId from the row itself
-                            squad_name = str(row.get('squadName', 'Unknown Squad'))  # Use squadName from the row
+                            squad_id = str(row.get('squadId', 'Unknown'))
+                            squad_name = str(row.get('squadName', 'Unknown Squad'))
 
                             # Apply the same fallback logic for playerId
                             if player_id == '0' or not player_id.isdigit():
@@ -295,7 +315,7 @@ class Scraper:
 
                             row['playerId'] = player_id
 
-                            # Generate unique IDs based on player and squad data
+                            # Generate unique IDs
                             uniquePlayerId = f"{player_id}-{squad_id}"
                             uniqueMatchId = f"{match_id}-{player_id}"
                             uniqueSquadId = f"{squad_id}-{squad_name}"
@@ -343,44 +363,86 @@ class Scraper:
                 # 1. Insert squad info
                 for squad_info_data in squad_info_list:
                     print(f"Inserting squad info: {squad_info_data}")
-                    self.db_helper.insert_data_dynamically('squad_info', squad_info_data, self.squad_fields)
+                    try:
+                        self.db_helper.insert_data_dynamically('squad_info', squad_info_data, self.squad_fields)
+                    except mysql_error as err:
+                        self.error_logger.error(f"MySQL error inserting squad info for fixtureId: {fixture_id}, squadId: {squad_info_data['squadId']}. Error: {err}")
+                        self.error_logger.error(f"MySQL Error Code: {err.errno}, SQLSTATE: {err.sqlstate}, Message: {err.msg}")
+                        raise  # Optionally, re-raise or handle the error
 
                 # 2. Insert sport info
                 print(f"Inserting sport info: {sport_info_data}")
-                self.db_helper.insert_data_dynamically('sport_info', sport_info_data, self.sport_fields)
+                try:
+                    self.db_helper.insert_data_dynamically('sport_info', sport_info_data, self.sport_fields)
+                except mysql_error as err:
+                    self.error_logger.error(f"MySQL error inserting sport info for fixtureId: {fixture_id}. Error: {err}")
+                    self.error_logger.error(f"MySQL Error Code: {err.errno}, SQLSTATE: {err.sqlstate}, Message: {err.msg}")
+                    raise  # Optionally, re-raise or handle the error
 
                 # 3. Insert player info
                 for player_info_data in player_info_list:
                     print(f"Inserting player info: {player_info_data}")
-                    self.db_helper.insert_data_dynamically('player_info', player_info_data, self.player_fields)
+                    try:
+                        self.db_helper.insert_data_dynamically('player_info', player_info_data, self.player_fields)
+                    except mysql_error as err:
+                        self.error_logger.error(f"MySQL error inserting player info for playerId: {player_info_data['playerId']}. Error: {err}")
+                        self.error_logger.error(f"MySQL Error Code: {err.errno}, SQLSTATE: {err.sqlstate}, Message: {err.msg}")
+                        raise  # Optionally, re-raise or handle the error
 
                 # 4. Insert fixture data
                 for fixture_data in fixture_data_list:
                     print(f"Inserting fixture data: {fixture_data}")
-                    self.db_helper.insert_data_dynamically(fixture_table, fixture_data, self.fixture_fields)
+                    try:
+                        self.db_helper.insert_data_dynamically(fixture_table, fixture_data, self.fixture_fields)
+                    except mysql_error as err:
+                        self.error_logger.error(f"MySQL error inserting fixture data for uniqueFixtureId: {fixture_data['uniqueFixtureId']}. Error: {err}")
+                        self.error_logger.error(f"MySQL Error Code: {err.errno}, SQLSTATE: {err.sqlstate}, Message: {err.msg}")
+                        raise  # Optionally, re-raise or handle the error
 
                 # 5. Insert match data
                 for match_data in match_data_list:
                     print(f"Inserting match data: {match_data}")
-                    self.db_helper.insert_data_dynamically(match_table, match_data, self.match_fields)
+                    try:
+                        self.db_helper.insert_data_dynamically(match_table, match_data, self.match_fields)
+                    except mysql_error as err:
+                        self.error_logger.error(f"MySQL error inserting match data for uniqueMatchId: {match_data['uniqueMatchId']}. Error: {err}")
+                        self.error_logger.error(f"MySQL Error Code: {err.errno}, SQLSTATE: {err.sqlstate}, Message: {err.msg}")
+                        raise  # Optionally, re-raise or handle the error
 
                 # 6. Insert period data
                 for period_row in period_data_list:
                     print(f"Inserting period data: {period_row}")
-                    self.db_helper.insert_data_dynamically(period_table, period_row, self.period_fields)
+                    try:
+                        self.db_helper.insert_data_dynamically(period_table, period_row, self.period_fields)
+                    except mysql_error as err:
+                        self.error_logger.error(f"MySQL error inserting period data for uniquePeriodId: {period_row['uniquePeriodId']}. Error: {err}")
+                        self.error_logger.error(f"MySQL Error Code: {err.errno}, SQLSTATE: {err.sqlstate}, Message: {err.msg}")
+                        raise  # Optionally, re-raise or handle the error
 
                 # 7. Insert score flow data
                 for score_flow_row in score_flow_data_list:
                     print(f"Inserting score flow data: {score_flow_row}")
-                    self.db_helper.insert_data_dynamically(score_flow_table, score_flow_row, self.score_flow_fields)
+                    try:
+                        self.db_helper.insert_data_dynamically(score_flow_table, score_flow_row, self.score_flow_fields)
+                    except mysql_error as err:
+                        self.error_logger.error(f"MySQL error inserting score flow data for scoreFlowId: {score_flow_row['scoreFlowId']}. Error: {err}")
+                        self.error_logger.error(f"MySQL Error Code: {err.errno}, SQLSTATE: {err.sqlstate}, Message: {err.msg}")
+                        raise  # Optionally, re-raise or handle the error
 
                 # Commit the transaction after successful batch insertion
                 self.connection.commit()
                 print(f"Transaction committed successfully for fixtureId: {fixture_id}")
 
-            except Exception as e:
-                logging.error(f"Error during transaction for fixtureId: {fixture_id}, leagueId: {league_id}. Error: {e}")
-                logging.error(f"Traceback: {traceback.format_exc()}")
+            except mysql_error as err:
+                self.error_logger.error(f"MySQL error during transaction for fixtureId: {fixture_id}, leagueId: {league_id}. Error: {err}")
+                self.error_logger.error(f"MySQL Error Code: {err.errno}, SQLSTATE: {err.sqlstate}, Message: {err.msg}")
                 self.connection.rollback()  # Rollback the transaction on error
-                logging.error(f"Transaction rolled back for fixtureId: {fixture_id}")
-                raise  # Re-raise the error after rollback
+                self.error_logger.error(f"Transaction rolled back for fixtureId: {fixture_id}")
+                raise  # Optionally, re-raise the error after rollback
+
+            except Exception as e:
+                self.error_logger.error(f"Unexpected error during transaction for fixtureId: {fixture_id}, leagueId: {league_id}. Error: {e}")
+                self.error_logger.error(f"Traceback: {traceback.format_exc()}")
+                self.connection.rollback()  # Rollback the transaction on error
+                self.error_logger.error(f"Transaction rolled back for fixtureId: {fixture_id}")
+                raise  # Optionally, re-raise the error after rollback  
