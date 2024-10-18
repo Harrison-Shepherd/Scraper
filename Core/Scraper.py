@@ -125,6 +125,9 @@ class Scraper:
 
             # Start the transaction
             try:
+                # Begin transaction
+                self.connection.start_transaction()
+
                 # Process sport info
                 sport_info_data = {
                     'sportId': str(sport_id),
@@ -358,7 +361,7 @@ class Scraper:
                 print(f"Collected {len(period_data_list)} period data entries.")
                 print(f"Collected {len(score_flow_data_list)} score flow entries.")
 
-                # Insert in the specified order
+                # Insert data with individual error handling
 
                 # 1. Insert squad info
                 for squad_info_data in squad_info_list:
@@ -367,8 +370,8 @@ class Scraper:
                         self.db_helper.insert_data_dynamically('squad_info', squad_info_data, self.squad_fields)
                     except mysql_error as err:
                         self.error_logger.error(f"MySQL error inserting squad info for fixtureId: {fixture_id}, squadId: {squad_info_data['squadId']}. Error: {err}")
-                        self.error_logger.error(f"MySQL Error Code: {err.errno}, SQLSTATE: {err.sqlstate}, Message: {err.msg}")
-                        raise  # Optionally, re-raise or handle the error
+                        self.error_logger.error(f"Data causing error: {squad_info_data}")
+                        continue  # Skip this squad_info_data and continue with the next one
 
                 # 2. Insert sport info
                 print(f"Inserting sport info: {sport_info_data}")
@@ -376,8 +379,10 @@ class Scraper:
                     self.db_helper.insert_data_dynamically('sport_info', sport_info_data, self.sport_fields)
                 except mysql_error as err:
                     self.error_logger.error(f"MySQL error inserting sport info for fixtureId: {fixture_id}. Error: {err}")
-                    self.error_logger.error(f"MySQL Error Code: {err.errno}, SQLSTATE: {err.sqlstate}, Message: {err.msg}")
-                    raise  # Optionally, re-raise or handle the error
+                    self.error_logger.error(f"Data causing error: {sport_info_data}")
+                    self.connection.rollback()
+                    self.error_logger.error(f"Transaction rolled back for fixtureId: {fixture_id}")
+                    continue  # Skip to the next fixture
 
                 # 3. Insert player info
                 for player_info_data in player_info_list:
@@ -386,8 +391,8 @@ class Scraper:
                         self.db_helper.insert_data_dynamically('player_info', player_info_data, self.player_fields)
                     except mysql_error as err:
                         self.error_logger.error(f"MySQL error inserting player info for playerId: {player_info_data['playerId']}. Error: {err}")
-                        self.error_logger.error(f"MySQL Error Code: {err.errno}, SQLSTATE: {err.sqlstate}, Message: {err.msg}")
-                        raise  # Optionally, re-raise or handle the error
+                        self.error_logger.error(f"Data causing error: {player_info_data}")
+                        continue  # Skip this player_info_data and continue with the next one
 
                 # 4. Insert fixture data
                 for fixture_data in fixture_data_list:
@@ -396,8 +401,8 @@ class Scraper:
                         self.db_helper.insert_data_dynamically(fixture_table, fixture_data, self.fixture_fields)
                     except mysql_error as err:
                         self.error_logger.error(f"MySQL error inserting fixture data for uniqueFixtureId: {fixture_data['uniqueFixtureId']}. Error: {err}")
-                        self.error_logger.error(f"MySQL Error Code: {err.errno}, SQLSTATE: {err.sqlstate}, Message: {err.msg}")
-                        raise  # Optionally, re-raise or handle the error
+                        self.error_logger.error(f"Data causing error: {fixture_data}")
+                        continue  # Skip this fixture_data and continue with the next one
 
                 # 5. Insert match data
                 for match_data in match_data_list:
@@ -406,8 +411,8 @@ class Scraper:
                         self.db_helper.insert_data_dynamically(match_table, match_data, self.match_fields)
                     except mysql_error as err:
                         self.error_logger.error(f"MySQL error inserting match data for uniqueMatchId: {match_data['uniqueMatchId']}. Error: {err}")
-                        self.error_logger.error(f"MySQL Error Code: {err.errno}, SQLSTATE: {err.sqlstate}, Message: {err.msg}")
-                        raise  # Optionally, re-raise or handle the error
+                        self.error_logger.error(f"Data causing error: {match_data}")
+                        continue  # Skip this match_data and continue with the next one
 
                 # 6. Insert period data
                 for period_row in period_data_list:
@@ -416,8 +421,8 @@ class Scraper:
                         self.db_helper.insert_data_dynamically(period_table, period_row, self.period_fields)
                     except mysql_error as err:
                         self.error_logger.error(f"MySQL error inserting period data for uniquePeriodId: {period_row['uniquePeriodId']}. Error: {err}")
-                        self.error_logger.error(f"MySQL Error Code: {err.errno}, SQLSTATE: {err.sqlstate}, Message: {err.msg}")
-                        raise  # Optionally, re-raise or handle the error
+                        self.error_logger.error(f"Data causing error: {period_row}")
+                        continue  # Skip this period_row and continue with the next one
 
                 # 7. Insert score flow data
                 for score_flow_row in score_flow_data_list:
@@ -426,23 +431,25 @@ class Scraper:
                         self.db_helper.insert_data_dynamically(score_flow_table, score_flow_row, self.score_flow_fields)
                     except mysql_error as err:
                         self.error_logger.error(f"MySQL error inserting score flow data for scoreFlowId: {score_flow_row['scoreFlowId']}. Error: {err}")
-                        self.error_logger.error(f"MySQL Error Code: {err.errno}, SQLSTATE: {err.sqlstate}, Message: {err.msg}")
-                        raise  # Optionally, re-raise or handle the error
+                        self.error_logger.error(f"Data causing error: {score_flow_row}")
+                        continue  # Skip this score_flow_row and continue with the next one
 
                 # Commit the transaction after successful batch insertion
                 self.connection.commit()
                 print(f"Transaction committed successfully for fixtureId: {fixture_id}")
 
             except mysql_error as err:
+                # Log the error and rollback the transaction
                 self.error_logger.error(f"MySQL error during transaction for fixtureId: {fixture_id}, leagueId: {league_id}. Error: {err}")
                 self.error_logger.error(f"MySQL Error Code: {err.errno}, SQLSTATE: {err.sqlstate}, Message: {err.msg}")
-                self.connection.rollback()  # Rollback the transaction on error
+                self.connection.rollback()
                 self.error_logger.error(f"Transaction rolled back for fixtureId: {fixture_id}")
-                raise  # Optionally, re-raise the error after rollback
+                continue  # Skip to the next fixture
 
             except Exception as e:
+                # Log any other exceptions and rollback the transaction
                 self.error_logger.error(f"Unexpected error during transaction for fixtureId: {fixture_id}, leagueId: {league_id}. Error: {e}")
                 self.error_logger.error(f"Traceback: {traceback.format_exc()}")
-                self.connection.rollback()  # Rollback the transaction on error
+                self.connection.rollback()
                 self.error_logger.error(f"Transaction rolled back for fixtureId: {fixture_id}")
-                raise  # Optionally, re-raise the error after rollback  
+                continue  # Skip to the next fixture
