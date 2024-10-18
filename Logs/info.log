@@ -5093,3 +5093,375 @@
 2024-10-18 23:28:13,075 - INFO - Generated uniquePlayerId: 80163-806 for player 80163 in match 80181003.
 2024-10-18 23:28:13,076 - INFO - Generated uniquePlayerId: 80075-806 for player 80075 in match 80181003.
 2024-10-18 23:28:13,077 - INFO - Generated uniquePlayerId: 80157-806 for player 80157 in match 80181003.
+2024-10-18 23:28:13,569 - INFO - Generated uniqueMatchId: 80181004-8018 for match 80181004.
+2024-10-18 23:28:13,570 - INFO - Generated uniqueSquadId: 810-West Coast Fever for home side in match 80181004.
+2024-10-18 23:28:13,570 - INFO - Generated uniqueSquadId: 804-Melbourne Vixens for away side in match 80181004.
+2024-10-18 23:28:13,708 - INFO - Generated uniquePlayerId: 80003-804 for player 80003 in match 80181004.
+2024-10-18 23:28:13,709 - INFO - Generated uniquePlayerId: 80293-804 for player 80293 in match 80181004.
+2024-10-18 23:28:13,710 - INFO - Generated uniquePlayerId: 80178-804 for player 80178 in match 80181004.
+2024-10-18 23:28:13,711 - INFO - Generated uniquePlayerId: 80041-804 for player 80041 in match 80181004.
+2024-10-18 23:28:13,712 - INFO - Generated uniquePlayerId: 80045-804 for player 80045 in match 80181004.
+2024-10-18 23:28:13,713 - INFO - Generated uniquePlayerId: 80049-804 for player 80049 in match 80181004.
+2024-10-18 23:28:13,714 - INFO - Generated uniquePlayerId: 80042-804 for player 80042 in match 80181004.
+2024-10-18 23:28:13,715 - INFO - Generated uniquePlayerId: 80010-804 for player 80010 in match 80181004.
+2024-10-18 23:28:13,716 - INFO - Generated uniquePlayerId: 80169-804 for player 80169 in match 80181004.
+2024-10-18 23:28:13,717 - INFO - Generated uniquePlayerId: 80171-804 for player 80171 in match 80181004.
+2024-10-18 23:28:13,718 - INFO - Generated uniquePlayerId: 80452-804 for player 80452 in match 80181004.
+2024-10-18 23:28:13,718 - INFO - Generated uniquePlayerId: 80346-804 for player 80346 in match 80181004.
+2024-10-18 23:28:13,719 - INFO - Generated uniquePlayerId: 80113-810 for player 80113 in match 80181004.
+2024-10-18 23:28:13,720 - INFO - Generated uniquePlayerId: 80074-810 for player 80074 in match 80181004.
+2024-10-18 23:28:13,721 - INFO - Generated uniquePlayerId: 80300-810 for player 80300 in match 80181004.
+2024-10-18 23:28:13,722 - INFO - Generated uniquePlayerId: 80152-810 for player 80152 in match 80181004.
+2024-10-18 23:28:13,723 - INFO - Generated uniquePlayerId: 80132-810 for player 80132 in match 80181004.
+2024-10-18 23:28:13,724 - INFO - Generated uniquePlayerId: 80127-810 for player 80127 in match 80181004.
+2024-10-18 23:28:13,725 - INFO - Generated uniquePlayerId: 80131-810 for player 80131 in match 80181004.
+2024-10-18 23:28:13,726 - INFO - Generated uniquePlayerId: 80044-810 for player 80044 in match 80181004.
+2024-10-18 23:28:13,727 - INFO - Generated uniquePlayerId: 80046-810 for player 80046 in match 80181004.
+2024-10-18 23:28:13,728 - INFO - Generated uniquePlayerId: 80445-810 for player 80445 in match 80181004.
+2024-10-18 23:28:13,728 - INFO - Generated uniquePlayerId: 80133-810 for player 80133 in match 80181004.
+2024-10-18 23:28:13,729 - INFO - Generated uniquePlayerId: 80454-810 for player 80454 in match 80181004.
+2024-10-18 23:28:14,412 - INFO - Generated uniqueMatchId: 80181005-8018 for match 80181005.
+2024-10-18 23:28:14,413 - INFO - Generated uniqueSquadId: 808-Southern Steel for home side in match 80181005.
+2024-10-18 23:28:14,413 - INFO - Generated uniqueSquadId: 809-Avis WBOP Magic for away side in match 80181005.
+2024-10-18 23:28:14,554 - INFO - Generated uniquePlayerId: 80058-808 for player 80058 in match 80181005.
+2024-10-18 23:28:14,556 - INFO - Generated uniquePlayerId: 80093-808 for player 80093 in match 80181005.
+2024-10-18 23:28:14,557 - INFO - Generated uniquePlayerId: 80094-808 for player 80094 in match 80181005.
+2024-10-18 23:28:14,559 - INFO - Generated uniquePlayerId: 80043-808 for player 80043 in match 80181005.
+2024-10-18 23:28:14,560 - INFO - Generated uniquePlayerId: 80096-808 for player 80096 in match 80181005.
+2024-10-18 23:28:14,561 - INFO - Generated uniquePlayerId: 80098-808 for player 80098 in match 80181005.
+2024-10-18 23:28:14,562 - INFO - Generated uniquePlayerId: 80057-808 for player 80057 in match 80181005.
+2024-10-18 23:28:14,564 - INFO - Generated uniquePlayerId: 80095-808 for player 80095 in match 80181005.
+2024-10-18 23:28:14,565 - INFO - Generated uniquePlayerId: 80282-808 for player 80282 in match 80181005.
+2024-10-18 23:28:14,566 - INFO - Generated uniquePlayerId: 80223-808 for player 80223 in match 80181005.
+2024-10-18 23:28:14,567 - INFO - Generated uniquePlayerId: 80061-808 for player 80061 in match 80181005.
+2024-10-18 23:28:14,568 - INFO - Generated uniquePlayerId: 80287-808 for player 80287 in match 80181005.
+2024-10-18 23:28:14,569 - INFO - Generated uniquePlayerId: 80111-809 for player 80111 in match 80181005.
+2024-10-18 23:28:14,570 - INFO - Generated uniquePlayerId: 80092-809 for player 80092 in match 80181005.
+2024-10-18 23:28:14,571 - INFO - Generated uniquePlayerId: 80091-809 for player 80091 in match 80181005.
+2024-10-18 23:28:14,572 - INFO - Generated uniquePlayerId: 80105-809 for player 80105 in match 80181005.
+2024-10-18 23:28:14,573 - INFO - Generated uniquePlayerId: 80184-809 for player 80184 in match 80181005.
+2024-10-18 23:28:14,575 - INFO - Generated uniquePlayerId: 80108-809 for player 80108 in match 80181005.
+2024-10-18 23:28:14,576 - INFO - Generated uniquePlayerId: 80101-809 for player 80101 in match 80181005.
+2024-10-18 23:28:14,577 - INFO - Generated uniquePlayerId: 80030-809 for player 80030 in match 80181005.
+2024-10-18 23:28:14,578 - INFO - Generated uniquePlayerId: 80393-809 for player 80393 in match 80181005.
+2024-10-18 23:28:14,579 - INFO - Generated uniquePlayerId: 80305-809 for player 80305 in match 80181005.
+2024-10-18 23:28:14,580 - INFO - Generated uniquePlayerId: 80029-809 for player 80029 in match 80181005.
+2024-10-18 23:28:14,581 - INFO - Generated uniquePlayerId: 80193-809 for player 80193 in match 80181005.
+2024-10-18 23:28:15,099 - INFO - Generated uniqueMatchId: 80181006-8018 for match 80181006.
+2024-10-18 23:28:15,099 - INFO - Generated uniqueSquadId: 802-Mainland Tactix for home side in match 80181006.
+2024-10-18 23:28:15,099 - INFO - Generated uniqueSquadId: 803-Central Pulse for away side in match 80181006.
+2024-10-18 23:28:15,248 - INFO - Generated uniquePlayerId: 80156-802 for player 80156 in match 80181006.
+2024-10-18 23:28:15,249 - INFO - Generated uniquePlayerId: 80028-802 for player 80028 in match 80181006.
+2024-10-18 23:28:15,251 - INFO - Generated uniquePlayerId: 80018-802 for player 80018 in match 80181006.
+2024-10-18 23:28:15,253 - INFO - Generated uniquePlayerId: 80221-802 for player 80221 in match 80181006.
+2024-10-18 23:28:15,254 - INFO - Generated uniquePlayerId: 80164-802 for player 80164 in match 80181006.
+2024-10-18 23:28:15,255 - INFO - Generated uniquePlayerId: 80292-802 for player 80292 in match 80181006.
+2024-10-18 23:28:15,256 - INFO - Generated uniquePlayerId: 80023-802 for player 80023 in match 80181006.
+2024-10-18 23:28:15,257 - INFO - Generated uniquePlayerId: 80035-802 for player 80035 in match 80181006.
+2024-10-18 23:28:15,258 - INFO - Generated uniquePlayerId: 80022-802 for player 80022 in match 80181006.
+2024-10-18 23:28:15,259 - INFO - Generated uniquePlayerId: 80422-802 for player 80422 in match 80181006.
+2024-10-18 23:28:15,260 - INFO - Generated uniquePlayerId: 80314-802 for player 80314 in match 80181006.
+2024-10-18 23:28:15,261 - INFO - Generated uniquePlayerId: 80052-803 for player 80052 in match 80181006.
+2024-10-18 23:28:15,262 - INFO - Generated uniquePlayerId: 80302-803 for player 80302 in match 80181006.
+2024-10-18 23:28:15,263 - INFO - Generated uniquePlayerId: 80154-803 for player 80154 in match 80181006.
+2024-10-18 23:28:15,264 - INFO - Generated uniquePlayerId: 80212-803 for player 80212 in match 80181006.
+2024-10-18 23:28:15,265 - INFO - Generated uniquePlayerId: 80037-803 for player 80037 in match 80181006.
+2024-10-18 23:28:15,266 - INFO - Generated uniquePlayerId: 80099-803 for player 80099 in match 80181006.
+2024-10-18 23:28:15,267 - INFO - Generated uniquePlayerId: 80024-803 for player 80024 in match 80181006.
+2024-10-18 23:28:15,268 - INFO - Generated uniquePlayerId: 80032-803 for player 80032 in match 80181006.
+2024-10-18 23:28:15,270 - INFO - Generated uniquePlayerId: 80170-803 for player 80170 in match 80181006.
+2024-10-18 23:28:15,271 - INFO - Generated uniquePlayerId: 80026-803 for player 80026 in match 80181006.
+2024-10-18 23:28:15,272 - INFO - Generated uniquePlayerId: 80469-803 for player 80469 in match 80181006.
+2024-10-18 23:28:15,754 - INFO - Generated uniqueMatchId: 80181007-8018 for match 80181007.
+2024-10-18 23:28:15,754 - INFO - Generated uniqueSquadId: 806-NSW Swifts for home side in match 80181007.
+2024-10-18 23:28:15,755 - INFO - Generated uniqueSquadId: 805-Northern Mystics for away side in match 80181007.
+2024-10-18 23:28:15,935 - INFO - Generated uniquePlayerId: 80198-805 for player 80198 in match 80181007.
+2024-10-18 23:28:15,936 - INFO - Generated uniquePlayerId: 80100-805 for player 80100 in match 80181007.
+2024-10-18 23:28:15,937 - INFO - Generated uniquePlayerId: 80088-805 for player 80088 in match 80181007.
+2024-10-18 23:28:15,938 - INFO - Generated uniquePlayerId: 80063-805 for player 80063 in match 80181007.
+2024-10-18 23:28:15,939 - INFO - Generated uniquePlayerId: 80109-805 for player 80109 in match 80181007.
+2024-10-18 23:28:15,940 - INFO - Generated uniquePlayerId: 80304-805 for player 80304 in match 80181007.
+2024-10-18 23:28:15,941 - INFO - Generated uniquePlayerId: 80192-805 for player 80192 in match 80181007.
+2024-10-18 23:28:15,942 - INFO - Generated uniquePlayerId: 80379-805 for player 80379 in match 80181007.
+2024-10-18 23:28:15,943 - INFO - Generated uniquePlayerId: 80054-805 for player 80054 in match 80181007.
+2024-10-18 23:28:15,944 - INFO - Generated uniquePlayerId: 80428-805 for player 80428 in match 80181007.
+2024-10-18 23:28:15,945 - INFO - Generated uniquePlayerId: 80055-805 for player 80055 in match 80181007.
+2024-10-18 23:28:15,946 - INFO - Generated uniquePlayerId: 80059-805 for player 80059 in match 80181007.
+2024-10-18 23:28:15,947 - INFO - Generated uniquePlayerId: 80064-806 for player 80064 in match 80181007.
+2024-10-18 23:28:15,948 - INFO - Generated uniquePlayerId: 80072-806 for player 80072 in match 80181007.
+2024-10-18 23:28:15,948 - INFO - Generated uniquePlayerId: 80075-806 for player 80075 in match 80181007.
+2024-10-18 23:28:15,949 - INFO - Generated uniquePlayerId: 80069-806 for player 80069 in match 80181007.
+2024-10-18 23:28:15,950 - INFO - Generated uniquePlayerId: 80163-806 for player 80163 in match 80181007.
+2024-10-18 23:28:15,951 - INFO - Generated uniquePlayerId: 80006-806 for player 80006 in match 80181007.
+2024-10-18 23:28:15,952 - INFO - Generated uniquePlayerId: 80038-806 for player 80038 in match 80181007.
+2024-10-18 23:28:15,953 - INFO - Generated uniquePlayerId: 80299-806 for player 80299 in match 80181007.
+2024-10-18 23:28:15,954 - INFO - Generated uniquePlayerId: 80068-806 for player 80068 in match 80181007.
+2024-10-18 23:28:15,955 - INFO - Generated uniquePlayerId: 80471-806 for player 80471 in match 80181007.
+2024-10-18 23:28:15,956 - INFO - Generated uniquePlayerId: 80182-806 for player 80182 in match 80181007.
+2024-10-18 23:28:15,957 - INFO - Generated uniquePlayerId: 80157-806 for player 80157 in match 80181007.
+2024-10-18 23:28:16,652 - INFO - Generated uniqueMatchId: 80181101-8018 for match 80181101.
+2024-10-18 23:28:16,652 - INFO - Generated uniqueSquadId: 808-Southern Steel for home side in match 80181101.
+2024-10-18 23:28:16,652 - INFO - Generated uniqueSquadId: 806-NSW Swifts for away side in match 80181101.
+2024-10-18 23:28:16,790 - INFO - Generated uniquePlayerId: 80064-806 for player 80064 in match 80181101.
+2024-10-18 23:28:16,791 - INFO - Generated uniquePlayerId: 80072-806 for player 80072 in match 80181101.
+2024-10-18 23:28:16,792 - INFO - Generated uniquePlayerId: 80075-806 for player 80075 in match 80181101.
+2024-10-18 23:28:16,792 - INFO - Generated uniquePlayerId: 80069-806 for player 80069 in match 80181101.
+2024-10-18 23:28:16,793 - INFO - Generated uniquePlayerId: 80163-806 for player 80163 in match 80181101.
+2024-10-18 23:28:16,794 - INFO - Generated uniquePlayerId: 80068-806 for player 80068 in match 80181101.
+2024-10-18 23:28:16,795 - INFO - Generated uniquePlayerId: 80038-806 for player 80038 in match 80181101.
+2024-10-18 23:28:16,796 - INFO - Generated uniquePlayerId: 80182-806 for player 80182 in match 80181101.
+2024-10-18 23:28:16,797 - INFO - Generated uniquePlayerId: 80471-806 for player 80471 in match 80181101.
+2024-10-18 23:28:16,798 - INFO - Generated uniquePlayerId: 80299-806 for player 80299 in match 80181101.
+2024-10-18 23:28:16,799 - INFO - Generated uniquePlayerId: 80006-806 for player 80006 in match 80181101.
+2024-10-18 23:28:16,800 - INFO - Generated uniquePlayerId: 80157-806 for player 80157 in match 80181101.
+2024-10-18 23:28:16,801 - INFO - Generated uniquePlayerId: 80093-808 for player 80093 in match 80181101.
+2024-10-18 23:28:16,802 - INFO - Generated uniquePlayerId: 80058-808 for player 80058 in match 80181101.
+2024-10-18 23:28:16,802 - INFO - Generated uniquePlayerId: 80094-808 for player 80094 in match 80181101.
+2024-10-18 23:28:16,804 - INFO - Generated uniquePlayerId: 80043-808 for player 80043 in match 80181101.
+2024-10-18 23:28:16,804 - INFO - Generated uniquePlayerId: 80095-808 for player 80095 in match 80181101.
+2024-10-18 23:28:16,805 - INFO - Generated uniquePlayerId: 80098-808 for player 80098 in match 80181101.
+2024-10-18 23:28:16,806 - INFO - Generated uniquePlayerId: 80057-808 for player 80057 in match 80181101.
+2024-10-18 23:28:16,807 - INFO - Generated uniquePlayerId: 80096-808 for player 80096 in match 80181101.
+2024-10-18 23:28:16,808 - INFO - Generated uniquePlayerId: 80223-808 for player 80223 in match 80181101.
+2024-10-18 23:28:16,809 - INFO - Generated uniquePlayerId: 80282-808 for player 80282 in match 80181101.
+2024-10-18 23:28:16,810 - INFO - Generated uniquePlayerId: 80061-808 for player 80061 in match 80181101.
+2024-10-18 23:28:16,811 - INFO - Generated uniquePlayerId: 80287-808 for player 80287 in match 80181101.
+2024-10-18 23:28:17,288 - INFO - Generated uniqueMatchId: 80181102-8018 for match 80181102.
+2024-10-18 23:28:17,289 - INFO - Generated uniqueSquadId: 804-Melbourne Vixens for home side in match 80181102.
+2024-10-18 23:28:17,289 - INFO - Generated uniqueSquadId: 803-Central Pulse for away side in match 80181102.
+2024-10-18 23:28:17,454 - INFO - Generated uniquePlayerId: 80052-803 for player 80052 in match 80181102.
+2024-10-18 23:28:17,455 - INFO - Generated uniquePlayerId: 80302-803 for player 80302 in match 80181102.
+2024-10-18 23:28:17,456 - INFO - Generated uniquePlayerId: 80170-803 for player 80170 in match 80181102.
+2024-10-18 23:28:17,457 - INFO - Generated uniquePlayerId: 80154-803 for player 80154 in match 80181102.
+2024-10-18 23:28:17,458 - INFO - Generated uniquePlayerId: 80212-803 for player 80212 in match 80181102.
+2024-10-18 23:28:17,459 - INFO - Generated uniquePlayerId: 80026-803 for player 80026 in match 80181102.
+2024-10-18 23:28:17,460 - INFO - Generated uniquePlayerId: 80099-803 for player 80099 in match 80181102.
+2024-10-18 23:28:17,460 - INFO - Generated uniquePlayerId: 80032-803 for player 80032 in match 80181102.
+2024-10-18 23:28:17,461 - INFO - Generated uniquePlayerId: 80024-803 for player 80024 in match 80181102.
+2024-10-18 23:28:17,462 - INFO - Generated uniquePlayerId: 80037-803 for player 80037 in match 80181102.
+2024-10-18 23:28:17,463 - INFO - Generated uniquePlayerId: 80469-803 for player 80469 in match 80181102.
+2024-10-18 23:28:17,464 - INFO - Generated uniquePlayerId: 80169-804 for player 80169 in match 80181102.
+2024-10-18 23:28:17,465 - INFO - Generated uniquePlayerId: 80003-804 for player 80003 in match 80181102.
+2024-10-18 23:28:17,466 - INFO - Generated uniquePlayerId: 80041-804 for player 80041 in match 80181102.
+2024-10-18 23:28:17,467 - INFO - Generated uniquePlayerId: 80176-804 for player 80176 in match 80181102.
+2024-10-18 23:28:17,468 - INFO - Generated uniquePlayerId: 80045-804 for player 80045 in match 80181102.
+2024-10-18 23:28:17,469 - INFO - Generated uniquePlayerId: 80049-804 for player 80049 in match 80181102.
+2024-10-18 23:28:17,470 - INFO - Generated uniquePlayerId: 80010-804 for player 80010 in match 80181102.
+2024-10-18 23:28:17,471 - INFO - Generated uniquePlayerId: 80178-804 for player 80178 in match 80181102.
+2024-10-18 23:28:17,472 - INFO - Generated uniquePlayerId: 80293-804 for player 80293 in match 80181102.
+2024-10-18 23:28:17,472 - INFO - Generated uniquePlayerId: 80346-804 for player 80346 in match 80181102.
+2024-10-18 23:28:17,473 - INFO - Generated uniquePlayerId: 80042-804 for player 80042 in match 80181102.
+2024-10-18 23:28:17,474 - INFO - Generated uniquePlayerId: 80474-804 for player 80474 in match 80181102.
+2024-10-18 23:28:18,013 - INFO - Generated uniqueMatchId: 80181104-8018 for match 80181104.
+2024-10-18 23:28:18,013 - INFO - Generated uniqueSquadId: 801-Adelaide Thunderbirds for home side in match 80181104.
+2024-10-18 23:28:18,013 - INFO - Generated uniqueSquadId: 809-Avis WBOP Magic for away side in match 80181104.
+2024-10-18 23:28:18,208 - INFO - Generated uniquePlayerId: 80067-801 for player 80067 in match 80181104.
+2024-10-18 23:28:18,209 - INFO - Generated uniquePlayerId: 80130-801 for player 80130 in match 80181104.
+2024-10-18 23:28:18,210 - INFO - Generated uniquePlayerId: 80439-801 for player 80439 in match 80181104.
+2024-10-18 23:28:18,211 - INFO - Generated uniquePlayerId: 80014-801 for player 80014 in match 80181104.
+2024-10-18 23:28:18,212 - INFO - Generated uniquePlayerId: 80294-801 for player 80294 in match 80181104.
+2024-10-18 23:28:18,213 - INFO - Generated uniquePlayerId: 80048-801 for player 80048 in match 80181104.
+2024-10-18 23:28:18,214 - INFO - Generated uniquePlayerId: 80440-801 for player 80440 in match 80181104.
+2024-10-18 23:28:18,215 - INFO - Generated uniquePlayerId: 80001-801 for player 80001 in match 80181104.
+2024-10-18 23:28:18,216 - INFO - Generated uniquePlayerId: 80002-801 for player 80002 in match 80181104.
+2024-10-18 23:28:18,216 - INFO - Generated uniquePlayerId: 80295-801 for player 80295 in match 80181104.
+2024-10-18 23:28:18,217 - INFO - Generated uniquePlayerId: 80449-801 for player 80449 in match 80181104.
+2024-10-18 23:28:18,218 - INFO - Generated uniquePlayerId: 80173-801 for player 80173 in match 80181104.
+2024-10-18 23:28:18,219 - INFO - Generated uniquePlayerId: 80111-809 for player 80111 in match 80181104.
+2024-10-18 23:28:18,220 - INFO - Generated uniquePlayerId: 80030-809 for player 80030 in match 80181104.
+2024-10-18 23:28:18,221 - INFO - Generated uniquePlayerId: 80091-809 for player 80091 in match 80181104.
+2024-10-18 23:28:18,222 - INFO - Generated uniquePlayerId: 80105-809 for player 80105 in match 80181104.
+2024-10-18 23:28:18,223 - INFO - Generated uniquePlayerId: 80184-809 for player 80184 in match 80181104.
+2024-10-18 23:28:18,224 - INFO - Generated uniquePlayerId: 80108-809 for player 80108 in match 80181104.
+2024-10-18 23:28:18,225 - INFO - Generated uniquePlayerId: 80101-809 for player 80101 in match 80181104.
+2024-10-18 23:28:18,226 - INFO - Generated uniquePlayerId: 80305-809 for player 80305 in match 80181104.
+2024-10-18 23:28:18,226 - INFO - Generated uniquePlayerId: 80393-809 for player 80393 in match 80181104.
+2024-10-18 23:28:18,227 - INFO - Generated uniquePlayerId: 80029-809 for player 80029 in match 80181104.
+2024-10-18 23:28:18,228 - INFO - Generated uniquePlayerId: 80092-809 for player 80092 in match 80181104.
+2024-10-18 23:28:18,229 - INFO - Generated uniquePlayerId: 80193-809 for player 80193 in match 80181104.
+2024-10-18 23:28:18,721 - INFO - Generated uniqueMatchId: 80181103-8018 for match 80181103.
+2024-10-18 23:28:18,721 - INFO - Generated uniqueSquadId: 805-Northern Mystics for home side in match 80181103.
+2024-10-18 23:28:18,721 - INFO - Generated uniqueSquadId: 802-Mainland Tactix for away side in match 80181103.
+2024-10-18 23:28:18,858 - INFO - Generated uniquePlayerId: 80022-802 for player 80022 in match 80181103.
+2024-10-18 23:28:18,859 - INFO - Generated uniquePlayerId: 80028-802 for player 80028 in match 80181103.
+2024-10-18 23:28:18,860 - INFO - Generated uniquePlayerId: 80221-802 for player 80221 in match 80181103.
+2024-10-18 23:28:18,860 - INFO - Generated uniquePlayerId: 80018-802 for player 80018 in match 80181103.
+2024-10-18 23:28:18,861 - INFO - Generated uniquePlayerId: 80164-802 for player 80164 in match 80181103.
+2024-10-18 23:28:18,862 - INFO - Generated uniquePlayerId: 80314-802 for player 80314 in match 80181103.
+2024-10-18 23:28:18,863 - INFO - Generated uniquePlayerId: 80023-802 for player 80023 in match 80181103.
+2024-10-18 23:28:18,864 - INFO - Generated uniquePlayerId: 80156-802 for player 80156 in match 80181103.
+2024-10-18 23:28:18,865 - INFO - Generated uniquePlayerId: 80422-802 for player 80422 in match 80181103.
+2024-10-18 23:28:18,866 - INFO - Generated uniquePlayerId: 80292-802 for player 80292 in match 80181103.
+2024-10-18 23:28:18,867 - INFO - Generated uniquePlayerId: 80054-805 for player 80054 in match 80181103.
+2024-10-18 23:28:18,868 - INFO - Generated uniquePlayerId: 80100-805 for player 80100 in match 80181103.
+2024-10-18 23:28:18,868 - INFO - Generated uniquePlayerId: 80304-805 for player 80304 in match 80181103.
+2024-10-18 23:28:18,869 - INFO - Generated uniquePlayerId: 80063-805 for player 80063 in match 80181103.
+2024-10-18 23:28:18,870 - INFO - Generated uniquePlayerId: 80109-805 for player 80109 in match 80181103.
+2024-10-18 23:28:18,871 - INFO - Generated uniquePlayerId: 80192-805 for player 80192 in match 80181103.
+2024-10-18 23:28:18,872 - INFO - Generated uniquePlayerId: 80059-805 for player 80059 in match 80181103.
+2024-10-18 23:28:18,873 - INFO - Generated uniquePlayerId: 80088-805 for player 80088 in match 80181103.
+2024-10-18 23:28:18,874 - INFO - Generated uniquePlayerId: 80428-805 for player 80428 in match 80181103.
+2024-10-18 23:28:18,875 - INFO - Generated uniquePlayerId: 80379-805 for player 80379 in match 80181103.
+2024-10-18 23:28:18,876 - INFO - Generated uniquePlayerId: 80198-805 for player 80198 in match 80181103.
+2024-10-18 23:28:19,332 - INFO - Generated uniqueMatchId: 80181105-8018 for match 80181105.
+2024-10-18 23:28:19,332 - INFO - Generated uniqueSquadId: 807-Queensland Firebirds for home side in match 80181105.
+2024-10-18 23:28:19,332 - INFO - Generated uniqueSquadId: 810-West Coast Fever for away side in match 80181105.
+2024-10-18 23:28:19,468 - INFO - Generated uniquePlayerId: 80078-807 for player 80078 in match 80181105.
+2024-10-18 23:28:19,469 - INFO - Generated uniquePlayerId: 80009-807 for player 80009 in match 80181105.
+2024-10-18 23:28:19,470 - INFO - Generated uniquePlayerId: 80301-807 for player 80301 in match 80181105.
+2024-10-18 23:28:19,471 - INFO - Generated uniquePlayerId: 80443-807 for player 80443 in match 80181105.
+2024-10-18 23:28:19,472 - INFO - Generated uniquePlayerId: 80076-807 for player 80076 in match 80181105.
+2024-10-18 23:28:19,473 - INFO - Generated uniquePlayerId: 80180-807 for player 80180 in match 80181105.
+2024-10-18 23:28:19,474 - INFO - Generated uniquePlayerId: 80080-807 for player 80080 in match 80181105.
+2024-10-18 23:28:19,474 - INFO - Generated uniquePlayerId: 80077-807 for player 80077 in match 80181105.
+2024-10-18 23:28:19,475 - INFO - Generated uniquePlayerId: 80297-807 for player 80297 in match 80181105.
+2024-10-18 23:28:19,476 - INFO - Generated uniquePlayerId: 80444-807 for player 80444 in match 80181105.
+2024-10-18 23:28:19,477 - INFO - Generated uniquePlayerId: 80442-807 for player 80442 in match 80181105.
+2024-10-18 23:28:19,478 - INFO - Generated uniquePlayerId: 80470-807 for player 80470 in match 80181105.
+2024-10-18 23:28:19,479 - INFO - Generated uniquePlayerId: 80113-810 for player 80113 in match 80181105.
+2024-10-18 23:28:19,480 - INFO - Generated uniquePlayerId: 80046-810 for player 80046 in match 80181105.
+2024-10-18 23:28:19,481 - INFO - Generated uniquePlayerId: 80074-810 for player 80074 in match 80181105.
+2024-10-18 23:28:19,482 - INFO - Generated uniquePlayerId: 80152-810 for player 80152 in match 80181105.
+2024-10-18 23:28:19,483 - INFO - Generated uniquePlayerId: 80132-810 for player 80132 in match 80181105.
+2024-10-18 23:28:19,484 - INFO - Generated uniquePlayerId: 80127-810 for player 80127 in match 80181105.
+2024-10-18 23:28:19,485 - INFO - Generated uniquePlayerId: 80131-810 for player 80131 in match 80181105.
+2024-10-18 23:28:19,485 - INFO - Generated uniquePlayerId: 80044-810 for player 80044 in match 80181105.
+2024-10-18 23:28:19,486 - INFO - Generated uniquePlayerId: 80133-810 for player 80133 in match 80181105.
+2024-10-18 23:28:19,487 - INFO - Generated uniquePlayerId: 80445-810 for player 80445 in match 80181105.
+2024-10-18 23:28:19,488 - INFO - Generated uniquePlayerId: 80343-810 for player 80343 in match 80181105.
+2024-10-18 23:28:19,489 - INFO - Generated uniquePlayerId: 80300-810 for player 80300 in match 80181105.
+2024-10-18 23:28:19,969 - INFO - Generated uniqueMatchId: 80181201-8018 for match 80181201.
+2024-10-18 23:28:19,970 - INFO - Generated uniqueSquadId: 802-Mainland Tactix for home side in match 80181201.
+2024-10-18 23:28:19,970 - INFO - Generated uniqueSquadId: 807-Queensland Firebirds for away side in match 80181201.
+2024-10-18 23:28:20,155 - INFO - Generated uniquePlayerId: 80022-802 for player 80022 in match 80181201.
+2024-10-18 23:28:20,156 - INFO - Generated uniquePlayerId: 80156-802 for player 80156 in match 80181201.
+2024-10-18 23:28:20,157 - INFO - Generated uniquePlayerId: 80028-802 for player 80028 in match 80181201.
+2024-10-18 23:28:20,158 - INFO - Generated uniquePlayerId: 80018-802 for player 80018 in match 80181201.
+2024-10-18 23:28:20,159 - INFO - Generated uniquePlayerId: 80164-802 for player 80164 in match 80181201.
+2024-10-18 23:28:20,160 - INFO - Generated uniquePlayerId: 80292-802 for player 80292 in match 80181201.
+2024-10-18 23:28:20,161 - INFO - Generated uniquePlayerId: 80023-802 for player 80023 in match 80181201.
+2024-10-18 23:28:20,162 - INFO - Generated uniquePlayerId: 80446-802 for player 80446 in match 80181201.
+2024-10-18 23:28:20,163 - INFO - Generated uniquePlayerId: 80035-802 for player 80035 in match 80181201.
+2024-10-18 23:28:20,164 - INFO - Generated uniquePlayerId: 80422-802 for player 80422 in match 80181201.
+2024-10-18 23:28:20,165 - INFO - Generated uniquePlayerId: 80221-802 for player 80221 in match 80181201.
+2024-10-18 23:28:20,165 - INFO - Generated uniquePlayerId: 80314-802 for player 80314 in match 80181201.
+2024-10-18 23:28:20,166 - INFO - Generated uniquePlayerId: 80078-807 for player 80078 in match 80181201.
+2024-10-18 23:28:20,167 - INFO - Generated uniquePlayerId: 80009-807 for player 80009 in match 80181201.
+2024-10-18 23:28:20,168 - INFO - Generated uniquePlayerId: 80442-807 for player 80442 in match 80181201.
+2024-10-18 23:28:20,169 - INFO - Generated uniquePlayerId: 80443-807 for player 80443 in match 80181201.
+2024-10-18 23:28:20,170 - INFO - Generated uniquePlayerId: 80077-807 for player 80077 in match 80181201.
+2024-10-18 23:28:20,171 - INFO - Generated uniquePlayerId: 80076-807 for player 80076 in match 80181201.
+2024-10-18 23:28:20,172 - INFO - Generated uniquePlayerId: 80080-807 for player 80080 in match 80181201.
+2024-10-18 23:28:20,173 - INFO - Generated uniquePlayerId: 80301-807 for player 80301 in match 80181201.
+2024-10-18 23:28:20,174 - INFO - Generated uniquePlayerId: 80297-807 for player 80297 in match 80181201.
+2024-10-18 23:28:20,175 - INFO - Generated uniquePlayerId: 80180-807 for player 80180 in match 80181201.
+2024-10-18 23:28:20,176 - INFO - Generated uniquePlayerId: 80470-807 for player 80470 in match 80181201.
+2024-10-18 23:28:20,176 - INFO - Generated uniquePlayerId: 80444-807 for player 80444 in match 80181201.
+2024-10-18 23:28:20,727 - INFO - Generated uniqueMatchId: 80181202-8018 for match 80181202.
+2024-10-18 23:28:20,727 - INFO - Generated uniqueSquadId: 804-Melbourne Vixens for home side in match 80181202.
+2024-10-18 23:28:20,727 - INFO - Generated uniqueSquadId: 806-NSW Swifts for away side in match 80181202.
+2024-10-18 23:28:20,864 - INFO - Generated uniquePlayerId: 80169-804 for player 80169 in match 80181202.
+2024-10-18 23:28:20,865 - INFO - Generated uniquePlayerId: 80293-804 for player 80293 in match 80181202.
+2024-10-18 23:28:20,866 - INFO - Generated uniquePlayerId: 80171-804 for player 80171 in match 80181202.
+2024-10-18 23:28:20,867 - INFO - Generated uniquePlayerId: 80041-804 for player 80041 in match 80181202.
+2024-10-18 23:28:20,868 - INFO - Generated uniquePlayerId: 80049-804 for player 80049 in match 80181202.
+2024-10-18 23:28:20,869 - INFO - Generated uniquePlayerId: 80042-804 for player 80042 in match 80181202.
+2024-10-18 23:28:20,869 - INFO - Generated uniquePlayerId: 80010-804 for player 80010 in match 80181202.
+2024-10-18 23:28:20,870 - INFO - Generated uniquePlayerId: 80003-804 for player 80003 in match 80181202.
+2024-10-18 23:28:20,871 - INFO - Generated uniquePlayerId: 80045-804 for player 80045 in match 80181202.
+2024-10-18 23:28:20,872 - INFO - Generated uniquePlayerId: 80346-804 for player 80346 in match 80181202.
+2024-10-18 23:28:20,873 - INFO - Generated uniquePlayerId: 80178-804 for player 80178 in match 80181202.
+2024-10-18 23:28:20,874 - INFO - Generated uniquePlayerId: 80474-804 for player 80474 in match 80181202.
+2024-10-18 23:28:20,875 - INFO - Generated uniquePlayerId: 80064-806 for player 80064 in match 80181202.
+2024-10-18 23:28:20,876 - INFO - Generated uniquePlayerId: 80072-806 for player 80072 in match 80181202.
+2024-10-18 23:28:20,877 - INFO - Generated uniquePlayerId: 80075-806 for player 80075 in match 80181202.
+2024-10-18 23:28:20,877 - INFO - Generated uniquePlayerId: 80069-806 for player 80069 in match 80181202.
+2024-10-18 23:28:20,878 - INFO - Generated uniquePlayerId: 80163-806 for player 80163 in match 80181202.
+2024-10-18 23:28:20,879 - INFO - Generated uniquePlayerId: 80006-806 for player 80006 in match 80181202.
+2024-10-18 23:28:20,880 - INFO - Generated uniquePlayerId: 80038-806 for player 80038 in match 80181202.
+2024-10-18 23:28:20,881 - INFO - Generated uniquePlayerId: 80299-806 for player 80299 in match 80181202.
+2024-10-18 23:28:20,882 - INFO - Generated uniquePlayerId: 80179-806 for player 80179 in match 80181202.
+2024-10-18 23:28:20,883 - INFO - Generated uniquePlayerId: 80068-806 for player 80068 in match 80181202.
+2024-10-18 23:28:20,884 - INFO - Generated uniquePlayerId: 80182-806 for player 80182 in match 80181202.
+2024-10-18 23:28:20,885 - INFO - Generated uniquePlayerId: 80157-806 for player 80157 in match 80181202.
+2024-10-18 23:28:21,358 - INFO - Generated uniqueMatchId: 80181203-8018 for match 80181203.
+2024-10-18 23:28:21,358 - INFO - Generated uniqueSquadId: 808-Southern Steel for home side in match 80181203.
+2024-10-18 23:28:21,358 - INFO - Generated uniqueSquadId: 805-Northern Mystics for away side in match 80181203.
+2024-10-18 23:28:21,495 - INFO - Generated uniquePlayerId: 80054-805 for player 80054 in match 80181203.
+2024-10-18 23:28:21,496 - INFO - Generated uniquePlayerId: 80100-805 for player 80100 in match 80181203.
+2024-10-18 23:28:21,497 - INFO - Generated uniquePlayerId: 80088-805 for player 80088 in match 80181203.
+2024-10-18 23:28:21,498 - INFO - Generated uniquePlayerId: 80063-805 for player 80063 in match 80181203.
+2024-10-18 23:28:21,499 - INFO - Generated uniquePlayerId: 80109-805 for player 80109 in match 80181203.
+2024-10-18 23:28:21,500 - INFO - Generated uniquePlayerId: 80304-805 for player 80304 in match 80181203.
+2024-10-18 23:28:21,501 - INFO - Generated uniquePlayerId: 80192-805 for player 80192 in match 80181203.
+2024-10-18 23:28:21,502 - INFO - Generated uniquePlayerId: 80059-805 for player 80059 in match 80181203.
+2024-10-18 23:28:21,503 - INFO - Generated uniquePlayerId: 80379-805 for player 80379 in match 80181203.
+2024-10-18 23:28:21,504 - INFO - Generated uniquePlayerId: 80198-805 for player 80198 in match 80181203.
+2024-10-18 23:28:21,505 - INFO - Generated uniquePlayerId: 80428-805 for player 80428 in match 80181203.
+2024-10-18 23:28:21,505 - INFO - Generated uniquePlayerId: 80055-805 for player 80055 in match 80181203.
+2024-10-18 23:28:21,506 - INFO - Generated uniquePlayerId: 80287-808 for player 80287 in match 80181203.
+2024-10-18 23:28:21,507 - INFO - Generated uniquePlayerId: 80058-808 for player 80058 in match 80181203.
+2024-10-18 23:28:21,508 - INFO - Generated uniquePlayerId: 80094-808 for player 80094 in match 80181203.
+2024-10-18 23:28:21,509 - INFO - Generated uniquePlayerId: 80043-808 for player 80043 in match 80181203.
+2024-10-18 23:28:21,510 - INFO - Generated uniquePlayerId: 80095-808 for player 80095 in match 80181203.
+2024-10-18 23:28:21,511 - INFO - Generated uniquePlayerId: 80061-808 for player 80061 in match 80181203.
+2024-10-18 23:28:21,512 - INFO - Generated uniquePlayerId: 80057-808 for player 80057 in match 80181203.
+2024-10-18 23:28:21,513 - INFO - Generated uniquePlayerId: 80096-808 for player 80096 in match 80181203.
+2024-10-18 23:28:21,514 - INFO - Generated uniquePlayerId: 80282-808 for player 80282 in match 80181203.
+2024-10-18 23:28:21,515 - INFO - Generated uniquePlayerId: 80223-808 for player 80223 in match 80181203.
+2024-10-18 23:28:21,516 - INFO - Generated uniquePlayerId: 80098-808 for player 80098 in match 80181203.
+2024-10-18 23:28:21,517 - INFO - Generated uniquePlayerId: 80093-808 for player 80093 in match 80181203.
+2024-10-18 23:28:21,998 - INFO - Generated uniqueMatchId: 80181205-8018 for match 80181205.
+2024-10-18 23:28:21,998 - INFO - Generated uniqueSquadId: 801-Adelaide Thunderbirds for home side in match 80181205.
+2024-10-18 23:28:21,998 - INFO - Generated uniqueSquadId: 810-West Coast Fever for away side in match 80181205.
+2024-10-18 23:28:22,225 - INFO - Generated uniquePlayerId: 80295-801 for player 80295 in match 80181205.
+2024-10-18 23:28:22,226 - INFO - Generated uniquePlayerId: 80067-801 for player 80067 in match 80181205.
+2024-10-18 23:28:22,227 - INFO - Generated uniquePlayerId: 80439-801 for player 80439 in match 80181205.
+2024-10-18 23:28:22,228 - INFO - Generated uniquePlayerId: 80014-801 for player 80014 in match 80181205.
+2024-10-18 23:28:22,229 - INFO - Generated uniquePlayerId: 80173-801 for player 80173 in match 80181205.
+2024-10-18 23:28:22,231 - INFO - Generated uniquePlayerId: 80048-801 for player 80048 in match 80181205.
+2024-10-18 23:28:22,232 - INFO - Generated uniquePlayerId: 80440-801 for player 80440 in match 80181205.
+2024-10-18 23:28:22,233 - INFO - Generated uniquePlayerId: 80002-801 for player 80002 in match 80181205.
+2024-10-18 23:28:22,234 - INFO - Generated uniquePlayerId: 80449-801 for player 80449 in match 80181205.
+2024-10-18 23:28:22,235 - INFO - Generated uniquePlayerId: 80130-801 for player 80130 in match 80181205.
+2024-10-18 23:28:22,236 - INFO - Generated uniquePlayerId: 80294-801 for player 80294 in match 80181205.
+2024-10-18 23:28:22,237 - INFO - Generated uniquePlayerId: 80015-801 for player 80015 in match 80181205.
+2024-10-18 23:28:22,239 - INFO - Generated uniquePlayerId: 80113-810 for player 80113 in match 80181205.
+2024-10-18 23:28:22,240 - INFO - Generated uniquePlayerId: 80074-810 for player 80074 in match 80181205.
+2024-10-18 23:28:22,241 - INFO - Generated uniquePlayerId: 80300-810 for player 80300 in match 80181205.
+2024-10-18 23:28:22,242 - INFO - Generated uniquePlayerId: 80152-810 for player 80152 in match 80181205.
+2024-10-18 23:28:22,243 - INFO - Generated uniquePlayerId: 80132-810 for player 80132 in match 80181205.
+2024-10-18 23:28:22,245 - INFO - Generated uniquePlayerId: 80127-810 for player 80127 in match 80181205.
+2024-10-18 23:28:22,246 - INFO - Generated uniquePlayerId: 80131-810 for player 80131 in match 80181205.
+2024-10-18 23:28:22,248 - INFO - Generated uniquePlayerId: 80445-810 for player 80445 in match 80181205.
+2024-10-18 23:28:22,249 - INFO - Generated uniquePlayerId: 80044-810 for player 80044 in match 80181205.
+2024-10-18 23:28:22,250 - INFO - Generated uniquePlayerId: 80133-810 for player 80133 in match 80181205.
+2024-10-18 23:28:22,251 - INFO - Generated uniquePlayerId: 80450-810 for player 80450 in match 80181205.
+2024-10-18 23:28:22,252 - INFO - Generated uniquePlayerId: 80046-810 for player 80046 in match 80181205.
+2024-10-18 23:28:22,742 - INFO - Generated uniqueMatchId: 80181204-8018 for match 80181204.
+2024-10-18 23:28:22,743 - INFO - Generated uniqueSquadId: 809-Avis WBOP Magic for home side in match 80181204.
+2024-10-18 23:28:22,743 - INFO - Generated uniqueSquadId: 803-Central Pulse for away side in match 80181204.
+2024-10-18 23:28:22,910 - INFO - Generated uniquePlayerId: 80052-803 for player 80052 in match 80181204.
+2024-10-18 23:28:22,911 - INFO - Generated uniquePlayerId: 80469-803 for player 80469 in match 80181204.
+2024-10-18 23:28:22,912 - INFO - Generated uniquePlayerId: 80170-803 for player 80170 in match 80181204.
+2024-10-18 23:28:22,913 - INFO - Generated uniquePlayerId: 80154-803 for player 80154 in match 80181204.
+2024-10-18 23:28:22,914 - INFO - Generated uniquePlayerId: 80037-803 for player 80037 in match 80181204.
+2024-10-18 23:28:22,915 - INFO - Generated uniquePlayerId: 80026-803 for player 80026 in match 80181204.
+2024-10-18 23:28:22,916 - INFO - Generated uniquePlayerId: 80024-803 for player 80024 in match 80181204.
+2024-10-18 23:28:22,917 - INFO - Generated uniquePlayerId: 80167-803 for player 80167 in match 80181204.
+2024-10-18 23:28:22,917 - INFO - Generated uniquePlayerId: 80302-803 for player 80302 in match 80181204.
+2024-10-18 23:28:22,918 - INFO - Generated uniquePlayerId: 80212-803 for player 80212 in match 80181204.
+2024-10-18 23:28:22,919 - INFO - Generated uniquePlayerId: 80099-803 for player 80099 in match 80181204.
+2024-10-18 23:28:22,920 - INFO - Generated uniquePlayerId: 80032-803 for player 80032 in match 80181204.
+2024-10-18 23:28:22,921 - INFO - Generated uniquePlayerId: 80193-809 for player 80193 in match 80181204.
+2024-10-18 23:28:22,922 - INFO - Generated uniquePlayerId: 80030-809 for player 80030 in match 80181204.
+2024-10-18 23:28:22,923 - INFO - Generated uniquePlayerId: 80091-809 for player 80091 in match 80181204.
+2024-10-18 23:28:22,924 - INFO - Generated uniquePlayerId: 80105-809 for player 80105 in match 80181204.
+2024-10-18 23:28:22,925 - INFO - Generated uniquePlayerId: 80393-809 for player 80393 in match 80181204.
+2024-10-18 23:28:22,926 - INFO - Generated uniquePlayerId: 80108-809 for player 80108 in match 80181204.
+2024-10-18 23:28:22,926 - INFO - Generated uniquePlayerId: 80101-809 for player 80101 in match 80181204.
+2024-10-18 23:28:22,927 - INFO - Generated uniquePlayerId: 80092-809 for player 80092 in match 80181204.
+2024-10-18 23:28:22,928 - INFO - Generated uniquePlayerId: 80305-809 for player 80305 in match 80181204.
+2024-10-18 23:28:22,929 - INFO - Generated uniquePlayerId: 80184-809 for player 80184 in match 80181204.
+2024-10-18 23:28:22,930 - INFO - Generated uniquePlayerId: 80029-809 for player 80029 in match 80181204.
+2024-10-18 23:28:22,931 - INFO - Generated uniquePlayerId: 80111-809 for player 80111 in match 80181204.
