@@ -68,6 +68,8 @@ CREATE TABLE NRL_mens_period (
   onReports INT DEFAULT NULL,
   scrumWins INT DEFAULT NULL,  -- Period-specific
   score INT DEFAULT NULL,  -- Period-specific
+  period VARCHAR(45) NOT NULL,
+
 
   -- Precomputed Columns (calculated in the application layer)
   uniqueMatchId VARCHAR(255) NOT NULL,

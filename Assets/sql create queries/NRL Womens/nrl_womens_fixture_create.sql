@@ -39,6 +39,8 @@ CREATE TABLE NRL_womens_fixture (
   roundNumber INT DEFAULT NULL,
   finalCode VARCHAR(45) DEFAULT NULL,
   finalShortCode VARCHAR(45) DEFAULT NULL,
+  matchName VARCHAR(255) NOT NULL,
+
 
   -- Precomputed Columns (calculated in the application layer)
   uniqueHomeSquadId VARCHAR(255) NOT NULL,

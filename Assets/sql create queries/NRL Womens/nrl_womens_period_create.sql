@@ -2,7 +2,8 @@ CREATE TABLE NRL_womens_period (
   -- Match and Squad Information
   matchId VARCHAR(50) NOT NULL,  
   squadId VARCHAR(50) NOT NULL,
-  periodId VARCHAR(45) NOT NULL,  
+  periodId VARCHAR(45) NOT NULL,
+  period VARCHAR(45) NOT NULL,
 
   -- Player Information
   playerId VARCHAR(50) NOT NULL,

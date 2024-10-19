@@ -7,13 +7,13 @@ import re
 import traceback
 from DatabaseUtils.SqlConnector import connect
 from DatabaseUtils.database_helper import DatabaseHelper
-from Utils.logger import setup_logging  
-from Utils.JsonLoader import load_json_fields  
+from Utils.logger import setup_logging
+from Utils.JsonLoader import load_json_fields
 from Core.LeaguesList import League
 from Core.FixtureDetails import Fixture
 from Core.MatchDetails import Match
-from Core.MatchDetails import PeriodData
-from Core.MatchDetails import ScoreFlow
+from Core.PeriodData import PeriodData
+from Core.ScoreFlowData import ScoreFlow
 from Utils.sport_category import determine_sport_category
 
 class Scraper:
@@ -26,7 +26,8 @@ class Scraper:
             self.error_logger.error("Failed to connect to the database.")
             raise ConnectionError("Database connection failed.")
         self.connection.autocommit = False  # Turn off auto-commit
-        self.db_helper = DatabaseHelper(self.connection, self.info_logger, self.error_logger)
+        self.db_helper = DatabaseHelper(
+            self.connection, self.info_logger, self.error_logger)
 
         # Load JSON fields for each table
         self.json_fields = load_json_fields()
@@ -38,15 +39,84 @@ class Scraper:
         self.squad_fields = self.json_fields['squad_fields']
         self.sport_fields = self.json_fields['sport_fields']
 
+        # Path to the BrokenFixtures.json file
+        self.broken_fixtures_file = os.path.join(
+            'Assets', 'Jsons', 'BrokenFixtures.json')
+        # Initialize the broken fixtures list
+        self.broken_fixtures = []
+
+        # Load existing broken fixtures if the file exists
+        if os.path.exists(self.broken_fixtures_file):
+            with open(self.broken_fixtures_file, 'r') as f:
+                try:
+                    self.broken_fixtures = json.load(f)
+                except json.JSONDecodeError:
+                    self.broken_fixtures = []
+
+    def add_broken_fixture(self, fixture_id):
+        if fixture_id not in self.broken_fixtures:
+            self.broken_fixtures.append(fixture_id)
+            # Write the updated list to the JSON file
+            with open(self.broken_fixtures_file, 'w') as f:
+                json.dump(self.broken_fixtures, f)
+            self.error_logger.info(
+                f"Added fixtureId {fixture_id} to broken fixtures list.")
+
+    def find_player_id(self, firstname, surname, squad_name=None):
+        # Normalize the names
+        firstname = firstname.strip().lower()
+        surname = surname.strip().lower()
+        params = [firstname, surname]
+
+        # Prepare the base query
+        query = """
+        SELECT playerId FROM static_player_info
+        WHERE LOWER(firstname) = %s AND LOWER(surname) = %s
+        """
+
+        # If squad_name is provided and not 'Unknown Squad', include it
+        if squad_name and squad_name.lower() != 'unknown squad':
+            squad_name = squad_name.strip().lower()
+            query += " AND LOWER(squadName) = %s"
+            params.append(squad_name)
+
+        # Log the query and parameters
+        self.error_logger.debug(
+            f"Executing query: {query} with params: {params}")
+
+        # Execute the query
+        cursor = self.connection.cursor()
+        cursor.execute(query, params)
+        result = cursor.fetchall()
+        cursor.close()
+
+        # Process the result
+        if len(result) == 1:
+            player_id_found = result[0][0]
+            self.error_logger.info(
+                f"Found playerId {player_id_found} for {firstname} "
+                f"{surname} with squadName {squad_name}.")
+            return player_id_found  # Return the playerId
+        elif len(result) > 1:
+            self.error_logger.warning(
+                f"Multiple playerIds found for {firstname} {surname} with "
+                f"squadName {squad_name}. Using the first one.")
+            return result[0][0]
+        else:
+            self.error_logger.warning(
+                f"No playerId found for {firstname} {surname} with "
+                f"squadName {squad_name}.")
+            return None  # No match found
+
     def scrape_entire_database(self):
         # Define the sport_id_map
         sport_id_map = {
-            'afl mens': 1, 
-            'afl womens': 2, 
-            'nrl mens': 3, 
+            'afl mens': 1,
+            'afl womens': 2,
+            'nrl mens': 3,
             'nrl womens': 4,
-            'fast5 mens': 5, 
-            'fast5 womens': 6, 
+            'fast5 mens': 5,
+            'fast5 womens': 6,
             'netball mens': 7,
             'netball womens nz': 8,
             'netball womens australia': 9,
@@ -59,17 +129,18 @@ class Scraper:
         leagues_df, _ = League.fetch_leagues()
         print(f"Fetched {len(leagues_df)} leagues.")
 
-        fallback_player_counter = {}  # Initialize the fallback player counter
-
         for _, league in leagues_df.iterrows():
             league_id = league['id']
             league_name = league['league_season']
             regulation_periods = league['regulationPeriods']
             fixture_id = league['id']
 
-            fixture = Fixture(league_id, fixture_id, regulation_periods, self.info_logger, self.error_logger)
+            fixture = Fixture(
+                league_id, fixture_id, regulation_periods,
+                self.info_logger, self.error_logger)
             fixture.fetch_data()
-            print(f"Fetched {len(fixture.data)} fixtures for league {league_id}.")
+            print(f"Fetched {len(fixture.data)} fixtures for league "
+                  f"{league_id}.")
             if fixture.data.empty:
                 continue
 
@@ -79,7 +150,7 @@ class Scraper:
             ).tolist()
             print(f"Extracted squad IDs: {squad_ids}")
 
-            # Filter sport category and sport id using sport category function
+            # Filter sport category and sport id
             sport_category, sport_id = determine_sport_category(
                 regulation_periods,
                 squad_ids,
@@ -87,38 +158,31 @@ class Scraper:
                 league_id
             )
 
-            # Normalize the sport category for logging and comparison
+            # Normalize the sport category
             sport_category = sport_category.strip()
-            sport_category = re.sub(r'\s+', ' ', sport_category)  # Remove extra spaces
+            sport_category = re.sub(
+                r'\s+', ' ', sport_category)  # Remove extra spaces
             sport_category_lower = sport_category.lower()
 
             # Log the normalized category
-            self.info_logger.info(f"Normalized sport category: '{sport_category}' for league: {league_id}")
-            self.info_logger.debug(f"Sport category representation: {repr(sport_category)}")
-            self.info_logger.debug(f"Length of sport_category: {len(sport_category)}")
+            self.info_logger.info(
+                f"Normalized sport category: '{sport_category}' "
+                f"for league: {league_id}")
 
             # Convert the sport_id_map keys to lowercase
             sport_id_map_lower = {k.lower(): v for k, v in sport_id_map.items()}
 
-            # Log the keys of sport_id_map_lower
-            self.info_logger.debug("Keys in sport_id_map_lower:")
-            for key in sport_id_map_lower.keys():
-                self.info_logger.debug(f"Key: '{key}', repr: {repr(key)}, length: {len(key)}")
-
-            # Check if the normalized sport category exists in the sport_id_map_lower
+            # Check if the sport category exists in the map
             if sport_category_lower in sport_id_map_lower:
                 sport_id = sport_id_map_lower[sport_category_lower]
-                self.info_logger.info(f"Sport ID found: {sport_id} for category: '{sport_category}'")
+                self.info_logger.info(
+                    f"Sport ID found: {sport_id} for category: "
+                    f"'{sport_category}'")
             else:
-                self.error_logger.error(f"Sport category '{sport_category}' not found in sport_id_map for league {league_id}.")
-                self.error_logger.error(f"Available sport categories: {list(sport_id_map.keys())}")
-                self.error_logger.error(f"Sport category representation: {repr(sport_category)}")
-                self.error_logger.error(f"Length of sport_category: {len(sport_category)}")
-                # Log the keys of sport_id_map_lower
-                self.error_logger.error("Keys in sport_id_map_lower:")
-                for key in sport_id_map_lower.keys():
-                    self.error_logger.error(f"Key: '{key}', repr: {repr(key)}, length: {len(key)}")
-                sport_id = None  # If the category is not in the map, log and skip to avoid failures
+                self.error_logger.error(
+                    f"Sport category '{sport_category}' not found in "
+                    f"sport_id_map for league {league_id}.")
+                sport_id = None  # Skip if category not in map
 
             match_year = re.search(r'\b(20\d{2})\b', league_name)
             fixture_year = match_year.group(1) if match_year else None
@@ -134,24 +198,10 @@ class Scraper:
                     'sportName': sport_category,
                     'fixtureId': str(fixture_id),
                     'fixtureTitle': league_name,
-                    'fixtureYear': None  # Will be set below
+                    'fixtureYear': fixture_year,
+                    'uniqueSportId': f"{sport_id}-{fixture_id}"
+                    if sport_id and fixture_id else 'Unknown'
                 }
-
-                # Generate unique sport ID
-                uniqueSportId = f"{sport_id}-{fixture_id}" if sport_id and fixture_id else 'Unknown'
-
-                # Add uniqueSportId to sport_info_data dictionary
-                sport_info_data['uniqueSportId'] = uniqueSportId
-
-                # Extract fixture year from league_name
-                match_year = re.search(r'\b(20\d{2})\b', league_name)
-                if match_year:
-                    sport_info_data['fixtureYear'] = match_year.group(1)
-                    fixture_title = league_name.replace(match_year.group(1), '').strip()
-                    fixture_title = re.sub(r'\(\)$', '', fixture_title).strip()
-                    sport_info_data['fixtureTitle'] = fixture_title
-                else:
-                    sport_info_data['fixtureYear'] = None
 
                 # Collect data for batch insertion
                 squad_info_list = []
@@ -168,6 +218,10 @@ class Scraper:
                 period_table = f"{table_prefix}_period"
                 score_flow_table = f"{table_prefix}_score_flow"
 
+                # Initialize sets to track processed IDs
+                processed_unique_match_ids = set()
+                processed_unique_squad_ids = set()
+
                 for index, match_row in fixture.data.iterrows():
                     if match_row['matchStatus'] in ['scheduled', 'incomplete']:
                         continue
@@ -175,16 +229,21 @@ class Scraper:
                     match_id = match_row['matchId'] or 'Unknown'
                     fixture.data.at[index, 'sportId'] = sport_id
 
-                    # Ensure fixture_id and match_id are not null for generating uniqueFixtureId
+                    # Generate uniqueFixtureId
                     uniqueFixtureId = f"{fixture_id}-{match_id}"
                     print(f"Unique fixture ID: {uniqueFixtureId}")
 
-                    # Ensure matchName is populated (fallback if it's None)
-                    match_name = match_row.get('matchName', 'Unknown Match')
+                    # Ensure matchName is populated
+                    match_name = match_row.get('matchName') or (
+                        f"{match_row['homeSquadName']} vs "
+                        f"{match_row['awaySquadName']} | "
+                        f"{match_row['localStartTime']}")
 
                     # Log uniqueMatchId
                     uniqueMatchId = f"{match_id}-{fixture_id}"
-                    self.info_logger.info(f"Generated uniqueMatchId: {uniqueMatchId} for match {match_id}.")
+                    self.info_logger.info(
+                        f"Generated uniqueMatchId: {uniqueMatchId} for "
+                        f"match {match_id}.")
 
                     # Collect fixture data
                     fixture_data = {
@@ -193,74 +252,137 @@ class Scraper:
                         'sportId': sport_id,
                         'matchId': match_id,
                         'uniqueFixtureId': uniqueFixtureId,
-                        'matchName': match_name,  
-                        'uniqueSportId': uniqueSportId  
+                        'matchName': match_name,
+                        'uniqueSportId': sport_info_data['uniqueSportId']
                     }
                     fixture_data_list.append(fixture_data)
 
                     # Collect squad info for both home and away
                     for squad_side in ['home', 'away']:
-                        squad_id = str(match_row.get(f'{squad_side}SquadId', 'Unknown'))
-                        squad_name = str(match_row.get(f'{squad_side}SquadName', 'Unknown Squad'))
-
-                        # Log warnings if squadId or squadName are missing
-                        if not squad_id or squad_id == 'Unknown':
-                            self.error_logger.warning(f"Missing squadId for {squad_side} side in match {match_id}. Using fallback value.")
-                        if not squad_name or squad_name == 'Unknown Squad':
-                            self.error_logger.warning(f"Missing squadName for {squad_side} side in match {match_id}. Using fallback value.")
+                        squad_id = str(match_row.get(
+                            f'{squad_side}SquadId', 'Unknown'))
+                        squad_name_raw = match_row.get(
+                            f'{squad_side}SquadName', '')
+                        # Handle NaN values for squad_name
+                        if not isinstance(squad_name_raw, str) or pd.isnull(
+                                squad_name_raw):
+                            squad_name = 'Unknown Squad'
+                        else:
+                            squad_name = squad_name_raw.strip()
 
                         # Generate uniqueSquadId
                         uniqueSquadId = f"{squad_id}-{squad_name}"
-                        self.info_logger.info(f"Generated uniqueSquadId: {uniqueSquadId} for {squad_side} side in match {match_id}.")
+                        self.info_logger.info(
+                            f"Generated uniqueSquadId: {uniqueSquadId} "
+                            f"for {squad_side} side in match {match_id}.")
 
-                        squad_info_data = {
-                            'squadId': squad_id,
-                            'squadName': squad_name,
-                            'uniqueSquadId': uniqueSquadId,
-                            'fixtureTitle': sport_info_data['fixtureTitle'],
-                            'fixtureYear': sport_info_data['fixtureYear']
-                        }
-                        squad_info_list.append(squad_info_data)
+                        if uniqueSquadId not in processed_unique_squad_ids:
+                            squad_info_data = {
+                                'squadId': squad_id,
+                                'squadName': squad_name,
+                                'uniqueSquadId': uniqueSquadId,
+                                'fixtureTitle': sport_info_data[
+                                    'fixtureTitle'],
+                                'fixtureYear': sport_info_data['fixtureYear']
+                            }
+                            squad_info_list.append(squad_info_data)
+                            processed_unique_squad_ids.add(uniqueSquadId)
 
                     # Fetch match data
-                    match = Match(league_id, match_id, fixture_id, sport_id, fixture_year)
+                    match = Match(
+                        league_id, match_id, fixture_id, sport_id,
+                        fixture_year)
                     match.fetch_data()
 
                     if match.data.empty:
-                        self.error_logger.warning(f"Match data is empty for matchId: {match_id}, leagueId: {league_id}.")
-                    else:
-                        print(f"Fetched {len(match.data)} match records for match {match_id}.")
+                        self.error_logger.warning(
+                            f"Match data is empty for matchId: {match_id}, "
+                            f"leagueId: {league_id}.")
+                        continue  # Skip to next match
+
+                    print(f"Fetched {len(match.data)} match records for "
+                          f"match {match_id}.")
+
+                    # Ensure 'firstname' and 'surname' are in match.data
+                    if 'firstname' not in match.data.columns or 'surname' not \
+                            in match.data.columns:
+                        self.error_logger.error(
+                            f"'firstname' or 'surname' not found in match "
+                            f"data for matchId: {match_id}. Skipping match.")
+                        continue  # Skip this match
 
                     # Process and collect match data
                     for _, row in match.data.iterrows():
                         player_id = str(row.get('playerId', 'Unknown'))
                         squad_id = str(row.get('squadId', 'Unknown'))
-                        squad_name = str(row.get('squadName', 'Unknown Squad'))
 
-                        # Check if player_id is None or empty and generate a fallback player_id
+                        # Extract squad_name, handle NaN values
+                        squad_name_raw = row.get('squadName', '')
+                        if not isinstance(squad_name_raw, str) or pd.isnull(
+                                squad_name_raw):
+                            squad_name = 'Unknown Squad'
+                        else:
+                            squad_name = squad_name_raw.strip()
+
+                        # Extract firstname and surname
+                        firstname = row.get('firstname', '')
+                        surname = row.get('surname', '')
+
+                        # Handle non-string types and NaN values
+                        if not isinstance(firstname, str) or pd.isnull(
+                                firstname):
+                            firstname = ''
+                        else:
+                            firstname = firstname.strip()
+                        if not isinstance(surname, str) or pd.isnull(surname):
+                            surname = ''
+                        else:
+                            surname = surname.strip()
+
+                        # Check if player_id is missing or invalid
                         if player_id == '0' or not player_id.isdigit():
-                            # Initialize the fallback counter for this match if not already initialized
-                            if match_id not in fallback_player_counter:
-                                fallback_player_counter[match_id] = 1
+                            self.error_logger.warning(
+                                f"Invalid or missing playerId '{player_id}' "
+                                f"for row: {row.to_dict()}")
+                            if firstname and surname:
+                                self.error_logger.info(
+                                    f"Attempting to find playerId for "
+                                    f"{firstname} {surname} with squadName "
+                                    f"'{squad_name}'.")
+                                found_player_id = self.find_player_id(
+                                    firstname, surname, squad_name)
+                                if found_player_id:
+                                    player_id = str(found_player_id)
+                                    self.info_logger.info(
+                                        f"Found playerId {player_id} for "
+                                        f"{firstname} {surname}.")
+                                else:
+                                    self.error_logger.warning(
+                                        f"Could not find playerId for "
+                                        f"{firstname} {surname} in match "
+                                        f"{match_id}. Skipping row.")
+                                    continue  # Skip this row
                             else:
-                                fallback_player_counter[match_id] += 1
-
-                            # Generate a fallback playerId like 'unknownPlayer1'
-                            player_id = f"unknownPlayer{fallback_player_counter[match_id]}"
+                                self.error_logger.warning(
+                                    f"Missing firstname or surname for player "
+                                    f"in match {match_id}. Skipping row.")
+                                continue  # Skip this row
 
                         # Log uniquePlayerId
                         uniquePlayerId = f"{player_id}-{squad_id}"
-                        self.info_logger.info(f"Generated uniquePlayerId: {uniquePlayerId} for player {player_id} in match {match_id}.")
+                        self.info_logger.info(
+                            f"Generated uniquePlayerId: {uniquePlayerId} for "
+                            f"player {player_id} in match {match_id}.")
 
                         row['matchId'] = str(match_id)
-                        row['playerId'] = player_id  # Update row with fallback playerId
+                        row['playerId'] = player_id  # Update playerId
                         row['squadId'] = squad_id
                         row['squadName'] = squad_name
 
                         # Generate unique IDs
                         uniqueMatchId = f"{match_id}-{player_id}"
                         uniqueSquadId = f"{squad_id}-{squad_name}"
-                        uniqueSportId = f"{sport_id}-{fixture_id}"
+                        uniqueSportId = sport_info_data['uniqueSportId']
                         uniqueFixtureId = f"{fixture_id}-{match_id}"
 
                         row['uniquePlayerId'] = uniquePlayerId
@@ -271,13 +393,17 @@ class Scraper:
 
                         match_data_list.append(row.to_dict())
 
+                        # Add the uniqueMatchId to the set
+                        processed_unique_match_ids.add(uniqueMatchId)
+
                         # Collect player info
                         player_info_data = {
                             'playerId': player_id,
-                            'firstname': row.get('firstname', 'Unknown'),
-                            'surname': row.get('surname', 'Unknown'),
+                            'firstname': firstname or 'Unknown',
+                            'surname': surname or 'Unknown',
                             'displayName': row.get('displayName', 'Unknown'),
-                            'shortDisplayName': row.get('shortDisplayName', 'Unknown'),
+                            'shortDisplayName': row.get(
+                                'shortDisplayName', 'Unknown'),
                             'squadName': squad_name,
                             'squadId': squad_id,
                             'sportId': sport_id,
@@ -286,80 +412,248 @@ class Scraper:
                         }
                         player_info_list.append(player_info_data)
 
-                    print(f"Collected {len(match_data_list)} match entries for league {league_id}.")
+                    print(f"Collected {len(match_data_list)} match entries "
+                          f"for league {league_id}.")
 
                     # Fetch period data
                     period_data = PeriodData(league_id, match_id)
                     period_data.fetch_data()
-                    print(f"Fetched {len(period_data.data)} period records for match {match_id}.")
+                    print(f"Fetched {len(period_data.data)} period records "
+                          f"for match {match_id}.")
 
                     if not period_data.data.empty:
                         period_data.data['matchId'] = str(match_id)
 
-                        for idx, row in period_data.data.iterrows():
-                            period_num = str(row.get('period', 'Unknown'))
-                            period_id = f"{match_id}_{period_num}"
+                        # Ensure 'firstname' and 'surname' are present
+                        if 'firstname' not in period_data.data.columns or \
+                                'surname' not in period_data.data.columns:
+                            self.error_logger.error(
+                                f"'firstname' or 'surname' not found in "
+                                f"period data for matchId: {match_id}. "
+                                f"Skipping period data.")
+                        else:
+                            for idx, row in period_data.data.iterrows():
+                                period_num = str(row.get('period', 'Unknown'))
+                                period_id = f"{match_id}_{period_num}"
 
-                            # Fetch the playerId and squadId for generating uniquePlayerId
-                            player_id = str(row.get('playerId', 'Unknown'))
-                            squad_id = str(row.get('squadId', 'Unknown'))
-                            squad_name = str(row.get('squadName', 'Unknown Squad'))
+                                # Fetch playerId and squadId
+                                player_id = str(row.get(
+                                    'playerId', 'Unknown'))
+                                squad_id = str(row.get('squadId', 'Unknown'))
 
-                            # Apply the same fallback logic for playerId
-                            if player_id == '0' or not player_id.isdigit():
-                                # Initialize the fallback counter for this match if not already initialized
-                                if match_id not in fallback_player_counter:
-                                    fallback_player_counter[match_id] = 1
+                                # Extract squad_name, handle NaN values
+                                squad_name_raw = row.get('squadName', '')
+                                if not isinstance(
+                                        squad_name_raw, str) or pd.isnull(
+                                        squad_name_raw):
+                                    squad_name = 'Unknown Squad'
                                 else:
-                                    fallback_player_counter[match_id] += 1
+                                    squad_name = squad_name_raw.strip()
 
-                                # Generate a fallback playerId like 'unknownPlayer1'
-                                player_id = f"unknownPlayer{fallback_player_counter[match_id]}"
+                                # Extract firstname and surname
+                                firstname = row.get('firstname', '')
+                                surname = row.get('surname', '')
 
-                            row['playerId'] = player_id
+                                # Handle non-string types and NaN values
+                                if not isinstance(
+                                        firstname, str) or pd.isnull(
+                                        firstname):
+                                    firstname = ''
+                                else:
+                                    firstname = firstname.strip()
+                                if not isinstance(
+                                        surname, str) or pd.isnull(surname):
+                                    surname = ''
+                                else:
+                                    surname = surname.strip()
 
-                            # Generate unique IDs
-                            uniquePlayerId = f"{player_id}-{squad_id}"
-                            uniqueMatchId = f"{match_id}-{player_id}"
-                            uniqueSquadId = f"{squad_id}-{squad_name}"
-                            uniqueSportId = f"{sport_id}-{fixture_id}"
-                            uniqueFixtureId = f"{fixture_id}-{match_id}"
-                            uniquePeriodId = period_id  # Use period_id as the uniquePeriodId
+                                # Apply the same logic for playerId
+                                if player_id == '0' or not player_id.isdigit():
+                                    self.error_logger.warning(
+                                        f"Invalid or missing playerId "
+                                        f"'{player_id}' for period data row: "
+                                        f"{row.to_dict()}")
+                                    if firstname and surname:
+                                        self.error_logger.info(
+                                            f"Attempting to find playerId for "
+                                            f"{firstname} {surname} with "
+                                            f"squadName '{squad_name}'.")
+                                        found_player_id = self.find_player_id(
+                                            firstname, surname, squad_name)
+                                        if found_player_id:
+                                            player_id = str(found_player_id)
+                                            self.info_logger.info(
+                                                f"Found playerId {player_id} "
+                                                f"for {firstname} {surname} "
+                                                f"in period data.")
+                                        else:
+                                            self.error_logger.warning(
+                                                f"Could not find playerId for "
+                                                f"{firstname} {surname} in "
+                                                f"period data for match "
+                                                f"{match_id}. Skipping row.")
+                                            continue  # Skip this row
+                                    else:
+                                        self.error_logger.warning(
+                                            f"Missing firstname or surname "
+                                            f"for player in period data for "
+                                            f"match {match_id}. Skipping row.")
+                                        continue  # Skip this row
 
-                            # Assign the generated IDs back to the row
-                            row['uniquePlayerId'] = uniquePlayerId
-                            row['uniqueMatchId'] = uniqueMatchId
-                            row['uniqueSquadId'] = uniqueSquadId
-                            row['uniqueSportId'] = uniqueSportId
-                            row['uniqueFixtureId'] = uniqueFixtureId
-                            row['periodId'] = period_id
-                            row['uniquePeriodId'] = uniquePeriodId
+                                # Generate uniqueMatchId
+                                uniqueMatchId = f"{match_id}-{player_id}"
 
-                            # Add the row to the period_data_list
-                            period_data_list.append(row.to_dict())
+                                # Check if uniqueMatchId was processed
+                                if uniqueMatchId not in \
+                                        processed_unique_match_ids:
+                                    self.error_logger.warning(
+                                        f"Match data for uniqueMatchId "
+                                        f"{uniqueMatchId} not found. "
+                                        f"Skipping period data row.")
+                                    continue  # Skip this period data row
+
+                                row['playerId'] = player_id
+
+                                # Generate unique IDs
+                                uniquePlayerId = f"{player_id}-{squad_id}"
+                                uniqueSquadId = f"{squad_id}-{squad_name}"
+                                uniqueSportId = sport_info_data[
+                                    'uniqueSportId']
+                                uniqueFixtureId = f"{fixture_id}-{match_id}"
+                                uniquePeriodId = period_id
+
+                                # Assign IDs back to the row
+                                row['uniquePlayerId'] = uniquePlayerId
+                                row['uniqueMatchId'] = uniqueMatchId
+                                row['uniqueSquadId'] = uniqueSquadId
+                                row['uniqueSportId'] = uniqueSportId
+                                row['uniqueFixtureId'] = uniqueFixtureId
+                                row['periodId'] = period_id
+                                row['uniquePeriodId'] = uniquePeriodId
+
+                                # Add the row to the period_data_list
+                                period_data_list.append(row.to_dict())
 
                     # Fetch score flow data
                     score_flow = ScoreFlow(league_id, match_id)
                     score_flow.fetch_data()
-                    print(f"Fetched {len(score_flow.data)} score flow records for match {match_id}.")
+                    print(f"Fetched {len(score_flow.data)} score flow records "
+                          f"for match {match_id}.")
                     if not score_flow.data.empty:
-                        score_flow_counter = 1
-                        for idx, row in score_flow.data.iterrows():
-                            score_flow_id = f"{match_id}_flow_{score_flow_counter}"
-                            score_flow.data.at[idx, 'scoreFlowId'] = score_flow_id
-                            score_flow_counter += 1
+                        if 'firstname' not in score_flow.data.columns or \
+                                'surname' not in score_flow.data.columns:
+                            self.error_logger.error(
+                                f"'firstname' or 'surname' not found in "
+                                f"score flow data for matchId: {match_id}. "
+                                f"Skipping score flow data.")
+                        else:
+                            score_flow_counter = 1
+                            for idx, row in score_flow.data.iterrows():
+                                score_flow_id = f"{match_id}_flow_" \
+                                                f"{score_flow_counter}"
+                                score_flow_counter += 1
 
-                            row['uniqueMatchId'] = f"{match_id}-{row.get('playerId', 'Unknown')}"
-                            row['uniquePlayerId'] = f"{row.get('playerId', 'Unknown')}-{row.get('squadId', 'Unknown')}"
+                                # Similar logic for playerId
+                                player_id = str(row.get(
+                                    'playerId', 'Unknown'))
+                                squad_id = str(row.get('squadId', 'Unknown'))
 
-                            score_flow_data_list.append(row.to_dict())
+                                # Extract squad_name, handle NaN values
+                                squad_name_raw = row.get('squadName', '')
+                                if not isinstance(
+                                        squad_name_raw, str) or pd.isnull(
+                                        squad_name_raw):
+                                    squad_name = 'Unknown Squad'
+                                else:
+                                    squad_name = squad_name_raw.strip()
+
+                                # Extract firstname and surname
+                                firstname = row.get('firstname', '')
+                                surname = row.get('surname', '')
+
+                                # Handle non-string types and NaN values
+                                if not isinstance(
+                                        firstname, str) or pd.isnull(
+                                        firstname):
+                                    firstname = ''
+                                else:
+                                    firstname = firstname.strip()
+                                if not isinstance(
+                                        surname, str) or pd.isnull(surname):
+                                    surname = ''
+                                else:
+                                    surname = surname.strip()
+
+                                if player_id == '0' or not player_id.isdigit():
+                                    self.error_logger.warning(
+                                        f"Invalid or missing playerId "
+                                        f"'{player_id}' for score flow data "
+                                        f"row: {row.to_dict()}")
+                                    if firstname and surname:
+                                        self.error_logger.info(
+                                            f"Attempting to find playerId for "
+                                            f"{firstname} {surname} with "
+                                            f"squadName '{squad_name}'.")
+                                        found_player_id = self.find_player_id(
+                                            firstname, surname, squad_name)
+                                        if found_player_id:
+                                            player_id = str(found_player_id)
+                                            self.info_logger.info(
+                                                f"Found playerId {player_id} "
+                                                f"for {firstname} {surname} "
+                                                f"in score flow data.")
+                                        else:
+                                            self.error_logger.warning(
+                                                f"Could not find playerId for "
+                                                f"{firstname} {surname} in "
+                                                f"score flow data for match "
+                                                f"{match_id}. Skipping row.")
+                                            continue  # Skip this row
+                                    else:
+                                        self.error_logger.warning(
+                                            f"Missing firstname or surname "
+                                            f"for player in score flow data "
+                                            f"for match {match_id}. "
+                                            f"Skipping row.")
+                                        continue  # Skip this row
+
+                                # Generate uniqueMatchId
+                                uniqueMatchId = f"{match_id}-{player_id}"
+
+                                # Check if uniqueMatchId was processed
+                                if uniqueMatchId not in \
+                                        processed_unique_match_ids:
+                                    self.error_logger.warning(
+                                        f"Match data for uniqueMatchId "
+                                        f"{uniqueMatchId} not found. "
+                                        f"Skipping score flow data row.")
+                                    continue  # Skip this score flow data row
+
+                                row['playerId'] = player_id
+                                row['uniqueMatchId'] = uniqueMatchId
+                                row['uniquePlayerId'] = f"{player_id}-" \
+                                                        f"{squad_id}"
+                                row['scoreFlowId'] = score_flow_id
+
+                                # Generate unique IDs
+                                uniqueSquadId = f"{squad_id}-{squad_name}"
+                                uniqueSportId = sport_info_data[
+                                    'uniqueSportId']
+                                uniqueFixtureId = f"{fixture_id}-{match_id}"
+
+                                row['uniqueSquadId'] = uniqueSquadId
+                                row['uniqueSportId'] = uniqueSportId
+                                row['uniqueFixtureId'] = uniqueFixtureId
+
+                                score_flow_data_list.append(row.to_dict())
 
                 print(f"Collected {len(squad_info_list)} squad info entries.")
                 print(f"Collected {len(player_info_list)} player info entries.")
                 print(f"Collected {len(fixture_data_list)} fixture entries.")
                 print(f"Collected {len(match_data_list)} match entries.")
                 print(f"Collected {len(period_data_list)} period data entries.")
-                print(f"Collected {len(score_flow_data_list)} score flow entries.")
+                print(f"Collected {len(score_flow_data_list)} score flow "
+                      f"entries.")
 
                 # Insert data with individual error handling
 
@@ -367,89 +661,144 @@ class Scraper:
                 for squad_info_data in squad_info_list:
                     print(f"Inserting squad info: {squad_info_data}")
                     try:
-                        self.db_helper.insert_data_dynamically('squad_info', squad_info_data, self.squad_fields)
+                        self.db_helper.insert_data_dynamically(
+                            'squad_info', squad_info_data, self.squad_fields)
                     except mysql_error as err:
-                        self.error_logger.error(f"MySQL error inserting squad info for fixtureId: {fixture_id}, squadId: {squad_info_data['squadId']}. Error: {err}")
-                        self.error_logger.error(f"Data causing error: {squad_info_data}")
-                        continue  # Skip this squad_info_data and continue with the next one
+                        self.error_logger.error(
+                            f"MySQL error inserting squad info for fixtureId: "
+                            f"{fixture_id}, squadId: "
+                            f"{squad_info_data['squadId']}. Error: {err}")
+                        self.error_logger.error(
+                            f"Data causing error: {squad_info_data}")
+                        continue  # Skip this squad_info_data
 
                 # 2. Insert sport info
                 print(f"Inserting sport info: {sport_info_data}")
                 try:
-                    self.db_helper.insert_data_dynamically('sport_info', sport_info_data, self.sport_fields)
+                    self.db_helper.insert_data_dynamically(
+                        'sport_info', sport_info_data, self.sport_fields)
                 except mysql_error as err:
-                    self.error_logger.error(f"MySQL error inserting sport info for fixtureId: {fixture_id}. Error: {err}")
-                    self.error_logger.error(f"Data causing error: {sport_info_data}")
+                    self.error_logger.error(
+                        f"MySQL error inserting sport info for fixtureId: "
+                        f"{fixture_id}. Error: {err}")
+                    self.error_logger.error(
+                        f"Data causing error: {sport_info_data}")
                     self.connection.rollback()
-                    self.error_logger.error(f"Transaction rolled back for fixtureId: {fixture_id}")
+                    self.error_logger.error(
+                        f"Transaction rolled back for fixtureId: {fixture_id}")
+                    # Add the fixtureId to the broken fixtures list
+                    self.add_broken_fixture(fixture_id)
                     continue  # Skip to the next fixture
 
                 # 3. Insert player info
                 for player_info_data in player_info_list:
                     print(f"Inserting player info: {player_info_data}")
                     try:
-                        self.db_helper.insert_data_dynamically('player_info', player_info_data, self.player_fields)
+                        self.db_helper.insert_data_dynamically(
+                            'player_info', player_info_data, self.player_fields)
                     except mysql_error as err:
-                        self.error_logger.error(f"MySQL error inserting player info for playerId: {player_info_data['playerId']}. Error: {err}")
-                        self.error_logger.error(f"Data causing error: {player_info_data}")
-                        continue  # Skip this player_info_data and continue with the next one
+                        self.error_logger.error(
+                            f"MySQL error inserting player info for "
+                            f"playerId: {player_info_data['playerId']}. "
+                            f"Error: {err}")
+                        self.error_logger.error(
+                            f"Data causing error: {player_info_data}")
+                        continue  # Skip this player_info_data
 
                 # 4. Insert fixture data
                 for fixture_data in fixture_data_list:
                     print(f"Inserting fixture data: {fixture_data}")
                     try:
-                        self.db_helper.insert_data_dynamically(fixture_table, fixture_data, self.fixture_fields)
+                        self.db_helper.insert_data_dynamically(
+                            fixture_table, fixture_data, self.fixture_fields)
                     except mysql_error as err:
-                        self.error_logger.error(f"MySQL error inserting fixture data for uniqueFixtureId: {fixture_data['uniqueFixtureId']}. Error: {err}")
-                        self.error_logger.error(f"Data causing error: {fixture_data}")
-                        continue  # Skip this fixture_data and continue with the next one
+                        self.error_logger.error(
+                            f"MySQL error inserting fixture data for "
+                            f"uniqueFixtureId: {fixture_data['uniqueFixtureId']}."
+                            f" Error: {err}")
+                        self.error_logger.error(
+                            f"Data causing error: {fixture_data}")
+                        continue  # Skip this fixture_data
 
                 # 5. Insert match data
                 for match_data in match_data_list:
                     print(f"Inserting match data: {match_data}")
                     try:
-                        self.db_helper.insert_data_dynamically(match_table, match_data, self.match_fields)
+                        self.db_helper.insert_data_dynamically(
+                            match_table, match_data, self.match_fields)
                     except mysql_error as err:
-                        self.error_logger.error(f"MySQL error inserting match data for uniqueMatchId: {match_data['uniqueMatchId']}. Error: {err}")
-                        self.error_logger.error(f"Data causing error: {match_data}")
-                        continue  # Skip this match_data and continue with the next one
+                        self.error_logger.error(
+                            f"MySQL error inserting match data for "
+                            f"uniqueMatchId: {match_data['uniqueMatchId']}."
+                            f" Error: {err}")
+                        self.error_logger.error(
+                            f"Data causing error: {match_data}")
+                        continue  # Skip this match_data
 
                 # 6. Insert period data
                 for period_row in period_data_list:
                     print(f"Inserting period data: {period_row}")
                     try:
-                        self.db_helper.insert_data_dynamically(period_table, period_row, self.period_fields)
+                        self.db_helper.insert_data_dynamically(
+                            period_table, period_row, self.period_fields)
                     except mysql_error as err:
-                        self.error_logger.error(f"MySQL error inserting period data for uniquePeriodId: {period_row['uniquePeriodId']}. Error: {err}")
-                        self.error_logger.error(f"Data causing error: {period_row}")
-                        continue  # Skip this period_row and continue with the next one
+                        self.error_logger.error(
+                            f"MySQL error inserting period data for "
+                            f"uniquePeriodId: {period_row['uniquePeriodId']}."
+                            f" Error: {err}")
+                        self.error_logger.error(
+                            f"Data causing error: {period_row}")
+                        continue  # Skip this period_row
 
                 # 7. Insert score flow data
                 for score_flow_row in score_flow_data_list:
                     print(f"Inserting score flow data: {score_flow_row}")
                     try:
-                        self.db_helper.insert_data_dynamically(score_flow_table, score_flow_row, self.score_flow_fields)
+                        self.db_helper.insert_data_dynamically(
+                            score_flow_table, score_flow_row,
+                            self.score_flow_fields)
                     except mysql_error as err:
-                        self.error_logger.error(f"MySQL error inserting score flow data for scoreFlowId: {score_flow_row['scoreFlowId']}. Error: {err}")
-                        self.error_logger.error(f"Data causing error: {score_flow_row}")
-                        continue  # Skip this score_flow_row and continue with the next one
+                        self.error_logger.error(
+                            f"MySQL error inserting score flow data for "
+                            f"scoreFlowId: {score_flow_row['scoreFlowId']}."
+                            f" Error: {err}")
+                        self.error_logger.error(
+                            f"Data causing error: {score_flow_row}")
+                        continue  # Skip this score_flow_row
 
                 # Commit the transaction after successful batch insertion
                 self.connection.commit()
-                print(f"Transaction committed successfully for fixtureId: {fixture_id}")
+                print(f"Transaction committed successfully for fixtureId: "
+                      f"{fixture_id}")
 
             except mysql_error as err:
                 # Log the error and rollback the transaction
-                self.error_logger.error(f"MySQL error during transaction for fixtureId: {fixture_id}, leagueId: {league_id}. Error: {err}")
-                self.error_logger.error(f"MySQL Error Code: {err.errno}, SQLSTATE: {err.sqlstate}, Message: {err.msg}")
+                self.error_logger.error(
+                    f"MySQL error during transaction for fixtureId: "
+                    f"{fixture_id}, leagueId: {league_id}. Error: {err}")
+                self.error_logger.error(
+                    f"MySQL Error Code: {err.errno}, SQLSTATE: {err.sqlstate}, "
+                    f"Message: {err.msg}")
                 self.connection.rollback()
-                self.error_logger.error(f"Transaction rolled back for fixtureId: {fixture_id}")
+                self.error_logger.error(
+                    f"Transaction rolled back for fixtureId: {fixture_id}")
+                # Add the fixtureId to the broken fixtures list
+                self.add_broken_fixture(fixture_id)
                 continue  # Skip to the next fixture
 
             except Exception as e:
                 # Log any other exceptions and rollback the transaction
-                self.error_logger.error(f"Unexpected error during transaction for fixtureId: {fixture_id}, leagueId: {league_id}. Error: {e}")
+                self.error_logger.error(
+                    f"Unexpected error during transaction for fixtureId: "
+                    f"{fixture_id}, leagueId: {league_id}. Error: {e}")
                 self.error_logger.error(f"Traceback: {traceback.format_exc()}")
                 self.connection.rollback()
-                self.error_logger.error(f"Transaction rolled back for fixtureId: {fixture_id}")
+                self.error_logger.error(
+                    f"Transaction rolled back for fixtureId: {fixture_id}")
+                # Add the fixtureId to the broken fixtures list
+                self.add_broken_fixture(fixture_id)
                 continue  # Skip to the next fixture
+
+        # At the end, write the broken fixtures list to the JSON file
+        with open(self.broken_fixtures_file, 'w') as f:
+            json.dump(self.broken_fixtures, f)

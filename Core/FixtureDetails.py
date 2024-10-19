@@ -2,10 +2,10 @@ import requests
 import os
 import pandas as pd
 import logging
+import re
 from Utils.sport_category import determine_sport_category
 from Utils.sanitize_filename import sanitize_filename
 from Core.LeaguesList import League
-import re
 
 class Fixture:
     def __init__(self, league_id, fixture_id, regulation_periods, info_logger, error_logger):
@@ -104,6 +104,12 @@ class Fixture:
                 matches_df['uniqueFixtureId'] = matches_df.apply(
                     lambda row: f"{self.fixture_id}-{row['matchId']}" if pd.notnull(row['matchId']) else 'Unknown', axis=1
                 )
+
+                # Ensure 'uniqueFixtureId' is of string type
+                matches_df['uniqueFixtureId'] = matches_df['uniqueFixtureId'].astype(str)
+                # Replace any 'nan' strings with 'Unknown'
+                matches_df['uniqueFixtureId'] = matches_df['uniqueFixtureId'].replace('nan', 'Unknown')
+
                 # Log missing match IDs
                 if matches_df['uniqueFixtureId'].str.contains('Unknown').any():
                     self.error_logger.warning(f"Some matches in league {self.league_id} are missing matchId, setting 'uniqueFixtureId' to 'Unknown'.")
@@ -115,6 +121,10 @@ class Fixture:
                 matches_df['uniqueAwaySquadId'] = matches_df.apply(
                     lambda row: f"{row['awaySquadId']}-{row['awaySquadName']}" if pd.notnull(row['awaySquadId']) and pd.notnull(row['awaySquadName']) else 'Unknown', axis=1
                 )
+
+                # Ensure 'uniqueHomeSquadId' and 'uniqueAwaySquadId' are of string type
+                matches_df['uniqueHomeSquadId'] = matches_df['uniqueHomeSquadId'].astype(str).replace('nan', 'Unknown')
+                matches_df['uniqueAwaySquadId'] = matches_df['uniqueAwaySquadId'].astype(str).replace('nan', 'Unknown')
 
                 # Log missing squad IDs
                 if matches_df['uniqueHomeSquadId'].str.contains('Unknown').any():

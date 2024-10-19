@@ -27,12 +27,13 @@ INSERT INTO NRL_womens_fixture (
   venueName, 
   roundNumber, 
   finalCode, 
-  finalShortCode, 
+  finalShortCode,
+  matchName,
   uniqueHomeSquadId, 
   uniqueAwaySquadId, 
   uniqueSportId, 
   uniqueFixtureId
 ) 
 VALUES (
-  %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+  %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
 );

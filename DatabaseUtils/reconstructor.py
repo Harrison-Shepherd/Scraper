@@ -17,11 +17,15 @@ def drop_all_tables(connection):
         cursor.execute("SHOW TABLES;")
         tables = cursor.fetchall()
 
-        # Drop each table
+        # Drop each table, except for 'static_player_info'
         for table in tables:
-            drop_table_query = f"DROP TABLE IF EXISTS `{table[0]}`;"
-            cursor.execute(drop_table_query)
-            print(f"Dropped table: {table[0]}")
+            table_name = table[0]
+            if table_name != 'static_player_info':
+                drop_table_query = f"DROP TABLE IF EXISTS `{table_name}`;"
+                cursor.execute(drop_table_query)
+                print(f"Dropped table: {table_name}")
+            else:
+                print(f"Skipping table: {table_name}")
 
         # Re-enable foreign key checks after dropping the tables
         cursor.execute("SET FOREIGN_KEY_CHECKS = 1;")

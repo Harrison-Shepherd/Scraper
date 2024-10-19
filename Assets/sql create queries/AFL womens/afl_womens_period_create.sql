@@ -19,7 +19,7 @@ CREATE TABLE afl_womens_period (
   inside50s INT DEFAULT NULL,
   jumperNumber INT DEFAULT NULL,
   disposalEfficiency INT DEFAULT NULL,
-  period INT DEFAULT NULL,
+  period VARCHAR(45) NOT NULL,
   blocks INT DEFAULT NULL,
   squadId VARCHAR(50) NOT NULL,
   marks INT DEFAULT NULL,

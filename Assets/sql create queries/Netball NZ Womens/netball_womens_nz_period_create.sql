@@ -34,7 +34,7 @@ CREATE TABLE netball_womens_nz_period (
   offsides INT DEFAULT NULL,
   secondPhaseReceive INT DEFAULT NULL,
   badPasses INT DEFAULT NULL,
-  period INT DEFAULT NULL,
+  period VARCHAR(45) NOT NULL,
   breaks INT DEFAULT NULL,
   blocks INT DEFAULT NULL,
   badHands INT DEFAULT NULL,

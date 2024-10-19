@@ -10,7 +10,7 @@ CREATE TABLE fast5_womens_period (
   -- Match Information
   quartersPlayed INT DEFAULT NULL,
   minutesPlayed INT DEFAULT NULL,
-  period INT NOT NULL,
+  period VARCHAR(45) NOT NULL,
 
   -- Performance Statistics
   goals INT DEFAULT NULL,

@@ -17,7 +17,7 @@ CREATE TABLE afl_mens_period (
   goals INT DEFAULT NULL,
   inside50s INT DEFAULT NULL,
   disposalEfficiency INT DEFAULT NULL,
-  period INT DEFAULT NULL,
+  period VARCHAR(45) NOT NULL,
   blocks INT DEFAULT NULL,
   squadId VARCHAR(50) NOT NULL,
   marks INT DEFAULT NULL,
